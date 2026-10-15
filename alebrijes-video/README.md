@@ -35,3 +35,20 @@ python3 build.py      # -> alebrijes_origin.mp4, alebrijes_origin.srt
 
 Needs ffmpeg and Pillow. Illustrations are AI-generated artistic recreations,
 not historical photographs; the end card says so.
+
+## Status / next steps (for whoever finishes the build)
+
+All media is already generated in ElevenLabs flow `fLhvgDtvZEPQvCRuG3Lm`; do
+**not** regenerate it. To finish:
+
+1. For each session ID in `assets/sessions.json`, call
+   `creative_get_flow_run_status` (flow above) to get a fresh signed URL
+   (they expire after 2 h) and download it with curl to
+   `assets/audio/<key>.mp3`, `assets/img/<key>.png` (use the `master_url`
+   PNG, not the webp preview) and `assets/music.mp3`. Needs network access to
+   `storage.googleapis.com`.
+2. Listen-check the music: it was generated without the instrumental flag. If
+   it has vocals, regenerate once with `eleven_music_v2_5`, `instrumental: true`.
+3. `python3 build.py`, then spot-check frames. The target is about 5:00; trim
+   `LEAD`/`TAIL` or the end card if it runs long.
+4. Commit `alebrijes_origin.mp4`, `alebrijes_origin.srt` and `assets/`.
