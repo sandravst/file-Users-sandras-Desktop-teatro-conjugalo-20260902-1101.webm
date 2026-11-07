@@ -52,6 +52,7 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .dots .grp { display: flex; gap: 3px; padding: 4px 6px; border: 2px dashed var(--crust); border-radius: 10px; }
 .dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--pumpkin); display: block; }
+.piefig { width: clamp(110px, 28vw, 150px); height: auto; aspect-ratio: 1; align-self: center; }
 .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 button { font: inherit; cursor: pointer; }
 .btn { font-family: var(--display); font-size: clamp(18px, 3.4vw, 26px); padding: 10px 12px; border-radius: 14px; border: 3px solid var(--ink); background: #ffd08a; color: var(--ink); box-shadow: 0 5px 0 var(--ink); transition: transform .08s; }
@@ -118,7 +119,8 @@ button { font: inherit; cursor: pointer; }
   <div class="panel">
     <div class="tabs" role="tablist" aria-label="Choose a level">
       <button class="tab" role="tab" id="tab1" data-level="0" aria-selected="false">Level 1</button>
-      <button class="tab" role="tab" id="tab2" data-level="1" aria-selected="true">Level 2<span class="new">NEW</span></button>
+      <button class="tab" role="tab" id="tab2" data-level="1" aria-selected="false">Level 2</button>
+      <button class="tab" role="tab" id="tab3" data-level="2" aria-selected="true">Level 3<span class="new">NEW</span></button>
     </div>
     <span class="eyebrow" id="introEyebrow">Your hero</span>
     <div class="intro">
@@ -141,6 +143,7 @@ button { font: inherit; cursor: pointer; }
     <h2 id="clueTitle">Clue</h2>
     <p id="clueStory"></p>
     <div class="dots" id="clueDots" hidden></div>
+    <canvas class="piefig" id="clueFig" width="220" height="220" hidden aria-label="Pie picture for this clue"></canvas>
     <div class="sum" id="clueSum">?</div>
     <div class="choices" id="choices"></div>
     <p class="hint" id="hint" aria-live="polite"></p>
@@ -366,6 +369,62 @@ button { font: inherit; cursor: pointer; }
         ['Midnight Bake', 'The kitchen lights go out. Find clues with a lantern. Adds measuring-cup puzzles.'],
       ],
     },
+    {
+      name: 'Level 3', subtitle: 'Level 3 · Whipped Cream Clouds',
+      width: 3800, sidekick: true, sky: true,
+      theme: { wall: '#ffe3d6', tile: 'rgba(0,0,0,0)', band: '#9c2b3a', lower: '#fff1dc', sky: '#bfe3f2', sun: '#e9782a', patch: false },
+      intro: {
+        eyebrow: 'Whipped Cream Clouds', title: 'Up in the dessert sky!',
+        stats: [['HP', '10/10'], ['Sidekick', 'Pip the pumpkin'], ['Power', 'Fractions'], ['Cream clouds', 'Springy: jump from one to go extra high'], ['Watch out', 'Gaps in the counter cost 1 heart']],
+        text: 'The finished pies need whipped cream on top, and the cream floated up into the sky. Bounce across the cream clouds, cross the gaps, and solve 3 fraction clues about halves and quarters.',
+      },
+      start: { eggs: 2, pumpkins: 2 },
+      clues: [
+        { x: 1400, kind: 'stand', title: 'The First Taste', eyebrow: 'Clue 1 · Fractions', fig: { n: 2, mark: [0], style: 'eaten' },
+          story: 'Pie Pie Hero cuts a pie into 2 equal pieces and eats 1 piece. What fraction of the pie was eaten?',
+          sumText: '? of the pie', answer: '1/2', options: ['1/2', '1/3', '2/1'], letter: 'T',
+          hint: 'Count all the equal pieces (2). That goes on the bottom. 1 piece was eaten, so 1 goes on top.' },
+        { x: 2350, kind: 'stand', title: "Pip's Snack", eyebrow: 'Clue 2 · Fractions', fig: { n: 4, mark: [0], style: 'eaten' },
+          story: 'A pie is cut into 4 equal slices. Pip eats 1 slice. What fraction of the pie did Pip eat?',
+          sumText: '? of the pie', answer: '1/4', options: ['1/2', '1/4', '4/1'], letter: 'O',
+          hint: 'There are 4 equal slices, so 4 goes on the bottom. Pip ate 1, so 1 goes on top.' },
+        { x: 3550, kind: 'stand', title: 'Cream on Top', eyebrow: 'Clue 3 · Fractions', fig: { n: 4, mark: [0, 1, 2], style: 'cream' },
+          story: 'A pie is cut into 4 equal slices. 3 slices get whipped cream on top. What fraction of the pie has cream?',
+          sumText: '? has cream', answer: '3/4', options: ['1/4', '3/4', '4/3'], letter: 'P',
+          hint: '4 equal slices go on the bottom. Count the slices with cream for the top.' },
+      ],
+      pits: [ { x: 700, w: 300 }, { x: 1550, w: 450 }, { x: 2550, w: 600 } ],
+      platforms: [
+        { x: 790, y: 400, w: 140, cloud: true },
+        { x: 1610, y: 380, w: 130, cloud: true },
+        { x: 1795, y: 350, w: 150, cloud: true, mx: 35, sp: 0.02 },
+        { x: 2600, y: 390, w: 130, cloud: true, my: 35, sp: 0.03 },
+        { x: 2800, y: 330, w: 130, cloud: true },
+        { x: 2850, y: 200, w: 120, cloud: true },
+        { x: 2990, y: 380, w: 120, cloud: true, mx: 40, sp: 0.025, ph: 1.5 },
+        { x: 3300, y: 340, w: 150 },
+      ],
+      steam: [ { x: 1200, p: 0 }, { x: 2150, p: 50 }, { x: 3400, p: 100 } ],
+      pads: [],
+      items: [
+        ...[220, 290, 360, 430, 1080, 1140, 2080, 2440, 3700].map(x => [x, GROUND - 40, 'star']),
+        ...[[860, 350], [1675, 330], [1855, 300], [2665, 340], [2865, 280], [3050, 330]].map(([x, y]) => [x, y, 'star']),
+        ...[2870, 2910, 2950].map(x => [x, 150, 'star']),
+        [3375, 300, 'egg'], [2930, 150, 'pumpkin'], [560, GROUND - 40, 'egg'],
+      ],
+      bakeText: 'Code word TOP! Cream on top of every pie!',
+      win: {
+        eyebrow: 'Level 3 complete · Code word cracked',
+        title: 'Every pie has cream on top!',
+        text: 'You worked out <b>1/2</b> of a pie, <b>1/4</b> of a pie, and <b>3/4</b> of a pie with cream. Code word: <b>TOP</b>.',
+        twistLabel: 'Pick one twist for Level 4',
+      },
+      twists: [
+        ['Caramel Lake Raft', 'Paddle a cookie raft across a caramel lake. Adds money puzzles with coins from the bake sale.'],
+        ['Pie Clock Tower', 'Climb a giant kitchen clock. Adds telling-time puzzles like "the pie bakes for 45 minutes."'],
+        ['Sprinkle Storm', 'Rainbow sprinkles rain down. Catch them to add skip-counting and number-pattern puzzles.'],
+      ],
+    },
   ];
 
   /* ---------- State ---------- */
@@ -380,6 +439,8 @@ button { font: inherit; cursor: pointer; }
       hp: 10, eggs: L.start.eggs, pumpkins: L.start.pumpkins, stars: 0, solved: 0, letters: [],
       items: L.items.map(([x, y, k]) => ({ x, y, k, got: false })), lastSafeX: 120,
       bake: 0, sparkles: [], toast: null,
+      plats: L.platforms.map(pl => ({ ...pl, cx: pl.x, cy: pl.y, pcy: pl.y, dx: 0, dy: 0, squish: 0 })),
+      pits: L.pits || [], onPl: null, lastGroundX: 120,
     };
   }
   S = fresh(LV);
@@ -420,7 +481,10 @@ button { font: inherit; cursor: pointer; }
     const c = S.L.clues[i];
     S.mode = 'clue'; keys.l = keys.r = keys.j = false;
     $('clueEyebrow').textContent = c.eyebrow; $('clueTitle').textContent = c.title;
-    $('clueStory').textContent = c.story; $('clueSum').textContent = `${c.a} ${c.op} ${c.b} = ?`;
+    $('clueStory').textContent = c.story;
+    $('clueSum').textContent = c.sumText || `${c.a} ${c.op} ${c.b} = ?`;
+    const fig = $('clueFig');
+    if (c.fig) { drawFractionPie(fig.getContext('2d'), c.fig); fig.hidden = false; } else fig.hidden = true;
     $('hint').textContent = '';
     const dots = $('clueDots'); dots.innerHTML = '';
     if (c.groups) {
@@ -438,7 +502,7 @@ button { font: inherit; cursor: pointer; }
       b.addEventListener('click', () => {
         if (v === c.answer) {
           b.classList.add('right');
-          $('clueSum').textContent = `${c.a} ${c.op} ${c.b} = ${c.answer}`;
+          $('clueSum').textContent = c.sumText ? c.sumText.replace('?', c.answer) : `${c.a} ${c.op} ${c.b} = ${c.answer}`;
           $('hint').textContent = `Correct! You found the letter ${c.letter}.`;
           box.querySelectorAll('button').forEach(x => x.disabled = true);
           setTimeout(() => {
@@ -458,6 +522,41 @@ button { font: inherit; cursor: pointer; }
     box.querySelector('button').focus({ preventScroll: true });
   }
 
+  // A pie cut into n equal slices; `mark` slices are eaten (empty plate) or topped with cream.
+  function drawFractionPie(g, { n, mark, style }) {
+    const cx = 110, cy = 110, R = 92;
+    g.clearRect(0, 0, 220, 220);
+    g.fillStyle = '#f1e3c8'; g.beginPath(); g.arc(cx, cy, R + 12, 0, Math.PI * 2); g.fill();
+    for (let i = 0; i < n; i++) {
+      const a0 = -Math.PI / 2 + (i / n) * Math.PI * 2, a1 = a0 + Math.PI * 2 / n;
+      const eaten = style === 'eaten' && mark.includes(i);
+      g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R, a0, a1); g.closePath();
+      if (eaten) {
+        g.fillStyle = '#fff8ee'; g.fill();
+        g.setLineDash([6, 5]); g.strokeStyle = '#c9863a'; g.lineWidth = 2; g.stroke(); g.setLineDash([]);
+        g.fillStyle = 'rgba(201,134,58,.5)';
+        for (let k = 0; k < 4; k++) { const a = a0 + (a1 - a0) * (0.25 + k * 0.17), r = R * (0.4 + (k % 2) * 0.25); g.beginPath(); g.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, 2.5, 0, Math.PI * 2); g.fill(); }
+        continue;
+      }
+      g.fillStyle = '#c9863a'; g.fill();
+      g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, R - 12, a0, a1); g.closePath();
+      g.fillStyle = '#e9782a'; g.fill();
+      if (style === 'cream' && mark.includes(i)) {
+        g.fillStyle = '#fffaf2';
+        const am = (a0 + a1) / 2;
+        [[0.55, 0], [0.4, -0.25], [0.4, 0.25], [0.7, -0.15], [0.7, 0.15]].forEach(([rr, da]) => {
+          g.beginPath(); g.arc(cx + Math.cos(am + da) * R * rr, cy + Math.sin(am + da) * R * rr, 13, 0, Math.PI * 2); g.fill();
+        });
+      }
+    }
+    g.strokeStyle = '#3b1f12'; g.lineWidth = 3;
+    for (let i = 0; i < n; i++) {
+      const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+      g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); g.stroke();
+    }
+    g.beginPath(); g.arc(cx, cy, R, 0, Math.PI * 2); g.stroke();
+  }
+
   function burst(x, y) {
     if (reduce) return;
     for (let i = 0; i < 24; i++) {
@@ -471,20 +570,42 @@ button { font: inherit; cursor: pointer; }
     S.t++;
     const p = S.p, L = S.L;
     if (S.mode === 'play') {
+      // move drifting clouds
+      for (const pl of S.plats) {
+        const a = S.t * (pl.sp || 0) + (pl.ph || 0);
+        const nx = pl.x + Math.sin(a) * (pl.mx || 0), ny = pl.y + Math.sin(a) * (pl.my || 0);
+        pl.dx = nx - pl.cx; pl.dy = ny - pl.cy; pl.pcy = pl.cy; pl.cx = nx; pl.cy = ny;
+        if (pl.squish) pl.squish--;
+      }
+      // ride the cloud you are standing on
+      if (S.onPl && p.onGround) { p.x += S.onPl.dx; p.y += S.onPl.dy; }
       const speed = 4.2;
       p.vx = (keys.r ? speed : 0) - (keys.l ? speed : 0);
       if (p.vx) p.face = p.vx > 0 ? 1 : -1;
-      if (keys.j && p.onGround) { p.vy = -14.5; p.onGround = false; }
+      if (keys.j && p.onGround) {
+        const springy = S.onPl && S.onPl.cloud;
+        p.vy = springy ? -18 : -14.5; p.onGround = false;
+        if (springy) S.onPl.squish = 14;
+      }
       p.vy += 0.75; if (p.vy > 16) p.vy = 16;
       const prevY = p.y;
       p.x += p.vx; p.y += p.vy;
       p.x = Math.max(40, Math.min(L.width - 60, p.x));
-      p.onGround = false;
-      if (p.y >= GROUND) { p.y = GROUND; p.vy = 0; p.onGround = true; }
-      for (const pl of L.platforms) {
-        if (p.vy >= 0 && prevY <= pl.y && p.y >= pl.y && p.x > pl.x - 18 && p.x < pl.x + pl.w + 18) {
-          p.y = pl.y; p.vy = 0; p.onGround = true;
+      p.onGround = false; S.onPl = null;
+      const overPit = S.pits.some(pt => p.x > pt.x + 12 && p.x < pt.x + pt.w - 12);
+      if (!overPit && p.y >= GROUND && prevY <= GROUND + 4) { p.y = GROUND; p.vy = 0; p.onGround = true; }
+      for (const pl of S.plats) {
+        if (p.vy >= 0 && prevY <= pl.pcy + 2 && p.y >= pl.cy && p.x > pl.cx - 18 && p.x < pl.cx + pl.w + 18) {
+          if (pl.cloud && prevY < pl.pcy - 1) pl.squish = 10;
+          p.y = pl.cy; p.vy = 0; p.onGround = true; S.onPl = pl;
         }
+      }
+      if (p.onGround && !S.onPl && !S.pits.some(pt => p.x > pt.x - 70 && p.x < pt.x + pt.w + 70)) S.lastGroundX = p.x;
+      // fell through a gap: lose 1 heart, pop back to safe ground
+      if (p.y > H + 60) {
+        S.hp = Math.max(0, S.hp - 1); if (S.hp === 0) S.hp = 10;
+        p.x = S.lastGroundX; p.y = GROUND; p.vy = 0; p.hurt = 60; p.onGround = true;
+        S.trail.length = 0; toast('Whoops! Into the cream. Try that jump again.'); hud();
       }
       // Pip pads: launch to the high shortcut
       for (const pad of L.pads) {
@@ -543,7 +664,40 @@ button { font: inherit; cursor: pointer; }
   }
 
   /* ---------- Draw ---------- */
+  function cloudBlob(g, x, y, w, h, col) {
+    g.fillStyle = col;
+    const n = Math.max(3, Math.round(w / 34));
+    for (let i = 0; i < n; i++) {
+      const px = x + (i + 0.5) * (w / n), r = h * (0.55 + 0.25 * Math.sin(i * 2.1 + 1));
+      g.beginPath(); g.arc(px, y - r * 0.3, r, 0, Math.PI * 2); g.fill();
+    }
+    roundRect(g, x, y - h * 0.35, w, h * 0.7, h * 0.35); g.fill();
+  }
+  function drawSky() {
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, '#f7b7a3'); sky.addColorStop(0.55, '#ffe3d6'); sky.addColorStop(1, '#fff1dc');
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,248,238,.9)'; ctx.beginPath(); ctx.arc(780 - S.camX * 0.05, 110, 46, 0, Math.PI * 2); ctx.fill();
+    for (let i = 0; i < 10; i++) {
+      const bx = ((i * 430 - S.camX * 0.3) % 4300 + 4300) % 4300 - 300;
+      if (bx > W + 50) continue;
+      cloudBlob(ctx, bx, 120 + (i % 3) * 60, 180, 40, 'rgba(255,250,242,.6)');
+    }
+    // floating counter, cut by the gaps
+    ctx.fillStyle = '#b06a32'; ctx.fillRect(0, GROUND, W, 16);
+    ctx.fillStyle = '#7a4320'; ctx.fillRect(0, GROUND + 16, W, H - GROUND - 16);
+    const cOff = -S.camX % 160;
+    ctx.fillStyle = 'rgba(255,255,255,.12)';
+    for (let x = cOff; x < W; x += 160) ctx.fillRect(x + 10, GROUND + 28, 140, 52);
+    for (const pt of S.pits) {
+      const x = pt.x - S.camX; if (x + pt.w < 0 || x > W) continue;
+      ctx.fillStyle = sky; ctx.fillRect(x, GROUND - 1, pt.w, H - GROUND + 1);
+      cloudBlob(ctx, x + 6, H - 10, pt.w - 12, 34, '#fffaf2');
+      ctx.fillStyle = '#9c2b3a'; ctx.fillRect(x - 4, GROUND, 4, H - GROUND); ctx.fillRect(x + pt.w, GROUND, 4, H - GROUND);
+    }
+  }
   function drawBG() {
+    if (S.L.sky) return drawSky();
     const T = S.L.theme;
     ctx.fillStyle = T.wall; ctx.fillRect(0, 0, W, H);
     const off = -(S.camX * 0.5) % 60;
@@ -630,6 +784,14 @@ button { font: inherit; cursor: pointer; }
         for (let q = 0; q < 4; q++) { ctx.beginPath(); ctx.arc(bx - 12 + q * 8, -38 - (q % 2) * 5, 6, 0, Math.PI * 2); ctx.fill(); }
       }
       signY = -150;
+    } else if (c.kind === 'stand') {
+      ctx.fillStyle = '#d9c3a0'; ctx.fillRect(-6, -70, 12, 70);
+      ctx.beginPath(); ctx.ellipse(0, -2, 34, 7, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f1e3c8'; ctx.beginPath(); ctx.ellipse(0, -72, 70, 14, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#c9863a'; ctx.beginPath(); ctx.ellipse(0, -82, 54, 14, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#e9782a'; ctx.beginPath(); ctx.ellipse(0, -85, 44, 10, 0, 0, Math.PI * 2); ctx.fill();
+      if (done) cloudBlob(ctx, -30, -92, 60, 16, '#fffaf2');
+      signY = -160;
     }
     ctx.fillStyle = done ? '#4f7a3a' : '#9c2b3a';
     roundRect(ctx, -54, signY, 108, 34, 10); ctx.fill();
@@ -700,9 +862,19 @@ button { font: inherit; cursor: pointer; }
   }
 
   function drawPlatforms() {
-    for (const pl of S.L.platforms) {
-      const x = pl.x - S.camX; if (x + pl.w < -20 || x > W + 20) continue;
-      if (pl.high) {
+    for (const pl of S.plats) {
+      const x = pl.cx - S.camX; if (x + pl.w < -20 || x > W + 20) continue;
+      if (pl.cloud) {
+        const sq = pl.squish ? Math.sin(pl.squish * 0.5) * 5 : 0;
+        ctx.save(); ctx.translate(0, pl.cy + 14 + sq);
+        cloudBlob(ctx, x - 6, 0, pl.w + 12, 30 - sq, '#f1e3c8');
+        cloudBlob(ctx, x, -4, pl.w, 28 - sq, '#fffaf2');
+        if (pl.mx || pl.my) {
+          ctx.fillStyle = 'rgba(201,134,58,.55)'; ctx.font = '12px "Nunito", sans-serif'; ctx.textAlign = 'center';
+          ctx.fillText(pl.mx ? '↔' : '↕', x + pl.w / 2, 4);
+        }
+        ctx.restore();
+      } else if (pl.high) {
         // pumpkin-vine shortcut
         ctx.fillStyle = '#4f7a3a'; roundRect(ctx, x, pl.y, pl.w, 14, 7); ctx.fill();
         ctx.fillStyle = '#6d9a4f';
@@ -743,7 +915,7 @@ button { font: inherit; cursor: pointer; }
     ctx.fillStyle = '#e9782a'; roundRect(ctx, 260, H - 22, Math.max(10, 440 * Math.min(1, p.x / S.L.clues[2].x)), 10, 5); ctx.fill();
     if (S.mode === 'play' && S.toast) banner(S.toast.text);
     else if (S.mode === 'play' && S.t < 240 && S.solved === 0)
-      banner(S.L.sidekick ? 'Pip is with you! Head right →' : 'Head right to the first clue! →');
+      banner(S.L.sky ? 'Jump onto the cream clouds to cross the gaps! →' : S.L.sidekick ? 'Pip is with you! Head right →' : 'Head right to the first clue! →');
     if (S.mode === 'bake') banner(S.L.bakeText);
   }
 
@@ -832,7 +1004,8 @@ button { font: inherit; cursor: pointer; }
   $('nextBtn').addEventListener('click', () => { selectLevel(S.li + 1); showTitle(); });
 
   const m = /^#level-(\d)$/.exec(location.hash);
-  selectLevel(m && LEVELS[+m[1] - 1] ? +m[1] - 1 : 1);
+  selectLevel(m && LEVELS[+m[1] - 1] ? +m[1] - 1 : LEVELS.length - 1);
+  if (location.search.includes('debug')) window.__pph = { state: () => S, keys };
   portraitLoop();
   loop();
 })();
