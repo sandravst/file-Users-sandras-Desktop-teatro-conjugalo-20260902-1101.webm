@@ -190,6 +190,8 @@ button { font: inherit; cursor: pointer; }
 <script>
 (() => {
   const W = 960, H = 540, GROUND = 452;
+  // Classroom version: all 5 levels exist, so levels lead straight into each other (no twist voting).
+  const SHOW_TWISTS = false;
   const cv = document.getElementById('game'), ctx = cv.getContext('2d');
   const $ = id => document.getElementById(id);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1385,13 +1387,13 @@ button { font: inherit; cursor: pointer; }
     });
     $('pickline').hidden = true;
     let saved = null; try { saved = localStorage.getItem(pickKey()); } catch (e) {}
-    if (saved) choose(saved);
+    if (saved && SHOW_TWISTS) choose(saved);
     const hasNext = !!LEVELS[S.li + 1];
     $('nextBtn').hidden = !hasNext && !L.finale;
     if (hasNext) $('nextBtn').textContent = `Play ${LEVELS[S.li + 1].name}`;
     // grand finale: no twist to pick, show every code word and the finished recipe
     const fin = L.finale;
-    $('twistEyebrow').hidden = !!fin; $('twists').hidden = !!fin; $('finale').hidden = !fin;
+    $('twistEyebrow').hidden = !!fin || !SHOW_TWISTS; $('twists').hidden = !!fin || !SHOW_TWISTS; $('finale').hidden = !fin;
     if (fin) {
       $('finaleHeading').textContent = fin.heading;
       $('finaleWords').innerHTML = fin.words.map(([lv, w, skill]) => `<div class="word"><small>${lv}</small><b>${w}</b><span>${skill}</span></div>`).join('');
@@ -1428,7 +1430,7 @@ button { font: inherit; cursor: pointer; }
   $('nextBtn').addEventListener('click', () => { selectLevel(LEVELS[S.li + 1] ? S.li + 1 : 0); showTitle(); });
 
   const m = /^#level-(\d)$/.exec(location.hash);
-  selectLevel(m && LEVELS[+m[1] - 1] ? +m[1] - 1 : LEVELS.length - 1);
+  selectLevel(m && LEVELS[+m[1] - 1] ? +m[1] - 1 : 0);
   if (location.search.includes('debug')) window.__pph = { state: () => S, keys };
   portraitLoop();
   loop();
