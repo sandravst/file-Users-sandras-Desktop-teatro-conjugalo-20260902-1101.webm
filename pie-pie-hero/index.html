@@ -52,7 +52,8 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 .dots .grp { display: flex; gap: 3px; padding: 4px 6px; border: 2px dashed var(--crust); border-radius: 10px; }
 .dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--pumpkin); display: block; }
-.piefig { width: clamp(110px, 28vw, 150px); height: auto; aspect-ratio: 1; align-self: center; }
+.piefig { width: clamp(110px, 28vw, 150px); max-width: 100%; height: auto; align-self: center; }
+.piefig.coins { width: clamp(220px, 70vw, 320px); }
 .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 button { font: inherit; cursor: pointer; }
 .btn { font-family: var(--display); font-size: clamp(18px, 3.4vw, 26px); padding: 10px 12px; border-radius: 14px; border: 3px solid var(--ink); background: #ffd08a; color: var(--ink); box-shadow: 0 5px 0 var(--ink); transition: transform .08s; }
@@ -120,7 +121,8 @@ button { font: inherit; cursor: pointer; }
     <div class="tabs" role="tablist" aria-label="Choose a level">
       <button class="tab" role="tab" id="tab1" data-level="0" aria-selected="false">Level 1</button>
       <button class="tab" role="tab" id="tab2" data-level="1" aria-selected="false">Level 2</button>
-      <button class="tab" role="tab" id="tab3" data-level="2" aria-selected="true">Level 3<span class="new">NEW</span></button>
+      <button class="tab" role="tab" id="tab3" data-level="2" aria-selected="false">Level 3</button>
+      <button class="tab" role="tab" id="tab4" data-level="3" aria-selected="true">Level 4<span class="new">NEW</span></button>
     </div>
     <span class="eyebrow" id="introEyebrow">Your hero</span>
     <div class="intro">
@@ -425,6 +427,58 @@ button { font: inherit; cursor: pointer; }
         ['Sprinkle Storm', 'Rainbow sprinkles rain down. Catch them to add skip-counting and number-pattern puzzles.'],
       ],
     },
+    {
+      name: 'Level 4', subtitle: 'Level 4 · Caramel Lake Raft',
+      width: 4000, sidekick: true, lake: true,
+      tip: 'Walk onto the cookie raft to sail across! →',
+      theme: { wall: '#ffd8a8', tile: 'rgba(0,0,0,0)', band: '#9c2b3a', lower: '#fff1dc', sky: '#bfe3f2', sun: '#e9782a', patch: false },
+      intro: {
+        eyebrow: 'Caramel Lake Raft', title: 'Sail to the bake sale!',
+        stats: [['HP', '10/10'], ['Sidekick', 'Pip the pumpkin'], ['Power', 'Counting money'], ['Cookie raft', 'Walk onto it and it sails you across'], ['Watch out', 'Caramel bubbles pop up. Jump over them!']],
+        text: 'The pies are ready, and the bake sale is on the far side of Caramel Lake. Ride the cookie raft, jump over the bubbles, and solve 3 money clues to crack the code word.',
+      },
+      start: { eggs: 3, pumpkins: 3 },
+      clues: [
+        { x: 780, kind: 'booth', title: 'The Cookie Price', eyebrow: 'Clue 1 · Money', fig: { type: 'coins', coins: ['d', 'd', 'n'] },
+          story: 'A shopper pays for a cookie with 2 dimes and 1 nickel. How much money is that?',
+          sumText: '10¢ + 10¢ + 5¢ = ?', answer: '25¢', options: ['15¢', '25¢', '30¢'], letter: 'B',
+          hint: 'A dime is 10¢ and a nickel is 5¢. Count on: 10, 20, then 5 more makes 25.' },
+        { x: 2150, kind: 'booth', title: 'A Slice of Pie', eyebrow: 'Clue 2 · Money', fig: { type: 'coins', coins: ['q', 'q', 'q'] },
+          story: 'Pip buys a slice of pumpkin pie with 3 quarters. How much does the slice cost?',
+          sumText: '25¢ + 25¢ + 25¢ = ?', answer: '75¢', options: ['30¢', '50¢', '75¢'], letter: 'U',
+          hint: 'A quarter is 25¢. Count by 25s: 25, 50, 75.' },
+        { x: 3700, kind: 'booth', title: 'The Change', eyebrow: 'Clue 3 · Making change', fig: { type: 'coins', coins: ['bill'], price: '75¢' },
+          story: 'Pie Pie Hero pays $1 (that is 100¢) for a 75¢ slice. How much change does Pie Pie Hero get back?',
+          sumText: '100¢ − 75¢ = ?', answer: '25¢', options: ['15¢', '25¢', '35¢'], letter: 'Y',
+          hint: 'Count up from 75¢ to 100¢: 75 plus 25 makes 100. So the change is 25¢.' },
+      ],
+      pits: [ { x: 950, w: 700, caramel: true }, { x: 2350, w: 900, caramel: true } ],
+      platforms: [
+        { x: 960, x2: 1470, y: GROUND, w: 170, raft: true },
+        { x: 2360, x2: 3070, y: GROUND, w: 170, raft: true },
+        { x: 3300, y: 350, w: 150 },
+      ],
+      steam: [ { x: 1900, p: 30 }, { x: 3500, p: 90 } ],
+      bubbles: [ { x: 1230, p: 0 }, { x: 1480, p: 75 }, { x: 2620, p: 20 }, { x: 2870, p: 95 }, { x: 3110, p: 50 } ],
+      pads: [],
+      items: [
+        ...[200, 260, 320, 380, 1750, 1810, 1870, 2000, 3850].map(x => [x, GROUND - 40, 'coin']),
+        ...[1100, 1350, 1600, 2500, 2750, 3000].map(x => [x, GROUND - 130, 'coin']),
+        [3375, 300, 'egg'], [560, GROUND - 40, 'pumpkin'], [2260, GROUND - 40, 'egg'],
+      ],
+      bakeText: 'Code word BUY! The bake sale is open!',
+      win: {
+        eyebrow: 'Level 4 complete · Code word cracked',
+        title: 'Every pie sold at the bake sale!',
+        text: 'You counted <b>25¢</b> for a cookie, <b>75¢</b> for a slice, and gave back <b>25¢</b> in change. Code word: <b>BUY</b>.',
+        twistLabel: 'Pick one twist for Level 5',
+      },
+      twists: [
+        ['Gingerbread Express', 'Ride a gingerbread train between stations. Adds subtraction puzzles with regrouping.'],
+        ['Marshmallow Mountain', 'Climb a squishy marshmallow mountain. Adds measuring puzzles in inches.'],
+        ['Jelly Bean Jungle', 'Swing through a jelly bean jungle. Adds sorting and bar graph puzzles.'],
+      ],
+    },
   ];
 
   /* ---------- State ---------- */
@@ -484,7 +538,15 @@ button { font: inherit; cursor: pointer; }
     $('clueStory').textContent = c.story;
     $('clueSum').textContent = c.sumText || `${c.a} ${c.op} ${c.b} = ?`;
     const fig = $('clueFig');
-    if (c.fig) { drawFractionPie(fig.getContext('2d'), c.fig); fig.hidden = false; } else fig.hidden = true;
+    if (c.fig && c.fig.type === 'coins') {
+      fig.width = 320; fig.height = 150; fig.classList.add('coins');
+      fig.setAttribute('aria-label', 'Money picture for this clue');
+      drawCoins(fig.getContext('2d'), c.fig); fig.hidden = false;
+    } else if (c.fig) {
+      fig.width = 220; fig.height = 220; fig.classList.remove('coins');
+      fig.setAttribute('aria-label', 'Pie picture for this clue');
+      drawFractionPie(fig.getContext('2d'), c.fig); fig.hidden = false;
+    } else fig.hidden = true;
     $('hint').textContent = '';
     const dots = $('clueDots'); dots.innerHTML = '';
     if (c.groups) {
@@ -520,6 +582,40 @@ button { font: inherit; cursor: pointer; }
     });
     $('clueScreen').hidden = false;
     box.querySelector('button').focus({ preventScroll: true });
+  }
+
+  // US coins (labelled with their value) or a $1 bill next to a price tag.
+  function drawCoins(g, { coins, price }) {
+    g.clearRect(0, 0, 320, 150);
+    const spec = { q: { r: 40, v: '25¢', n: 'quarter' }, d: { r: 30, v: '10¢', n: 'dime' }, n: { r: 35, v: '5¢', n: 'nickel' } };
+    if (coins[0] === 'bill') {
+      g.fillStyle = '#cfe3c0'; roundRect(g, 14, 30, 170, 86, 8); g.fill();
+      g.strokeStyle = '#4f7a3a'; g.lineWidth = 3; g.stroke();
+      g.strokeRect(24, 40, 150, 66);
+      g.fillStyle = '#4f7a3a'; g.beginPath(); g.ellipse(99, 73, 22, 26, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#cfe3c0'; g.font = '24px "Lilita One", sans-serif'; g.textAlign = 'center'; g.fillText('$1', 99, 82);
+      g.fillStyle = '#3b1f12'; g.font = '13px "Nunito", sans-serif'; g.fillText('100¢', 99, 136);
+      // price tag
+      g.save(); g.translate(250, 73); g.rotate(-0.15);
+      g.fillStyle = '#fff'; g.strokeStyle = '#9c2b3a'; g.lineWidth = 3;
+      g.beginPath(); g.moveTo(-50, -30); g.lineTo(34, -30); g.lineTo(54, 0); g.lineTo(34, 30); g.lineTo(-50, 30); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = '#9c2b3a'; g.font = '26px "Lilita One", sans-serif'; g.textAlign = 'center'; g.fillText(price, -6, 10);
+      g.restore();
+      return;
+    }
+    const gap = 14, total = coins.reduce((s, k) => s + spec[k].r * 2, 0) + gap * (coins.length - 1);
+    let x = (320 - total) / 2;
+    coins.forEach(k => {
+      const { r, v, n } = spec[k], cx = x + r, cy = 66;
+      g.fillStyle = k === 'q' ? '#d6d9dc' : k === 'd' ? '#c9ccd0' : '#b9bcc0';
+      g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = '#7d8288'; g.lineWidth = 3; g.stroke();
+      g.beginPath(); g.arc(cx, cy, r - 6, 0, Math.PI * 2); g.lineWidth = 1.5; g.stroke();
+      g.fillStyle = '#3b1f12'; g.font = `${Math.round(r * 0.6)}px "Lilita One", sans-serif`; g.textAlign = 'center';
+      g.fillText(v, cx, cy + r * 0.22);
+      g.font = '13px "Nunito", sans-serif'; g.fillText(n, cx, cy + r + 18);
+      x += r * 2 + gap;
+    });
   }
 
   // A pie cut into n equal slices; `mark` slices are eaten (empty plate) or topped with cream.
@@ -573,7 +669,12 @@ button { font: inherit; cursor: pointer; }
       // move drifting clouds
       for (const pl of S.plats) {
         const a = S.t * (pl.sp || 0) + (pl.ph || 0);
-        const nx = pl.x + Math.sin(a) * (pl.mx || 0), ny = pl.y + Math.sin(a) * (pl.my || 0);
+        let nx = pl.x + Math.sin(a) * (pl.mx || 0), ny = pl.y + Math.sin(a) * (pl.my || 0);
+        if (pl.raft) {
+          // cookie raft: sails to the far shore while you ride it, drifts back when you leave
+          const target = pl.active ? pl.x2 : pl.x, v = pl.active ? 2.2 : 3;
+          nx = pl.cx + Math.max(-v, Math.min(v, target - pl.cx)); ny = pl.y;
+        }
         pl.dx = nx - pl.cx; pl.dy = ny - pl.cy; pl.pcy = pl.cy; pl.cx = nx; pl.cy = ny;
         if (pl.squish) pl.squish--;
       }
@@ -585,27 +686,49 @@ button { font: inherit; cursor: pointer; }
       if (keys.j && p.onGround) {
         const springy = S.onPl && S.onPl.cloud;
         p.vy = springy ? -18 : -14.5; p.onGround = false;
+        p.cvx = S.onPl ? S.onPl.dx : 0; // keep moving with the raft or cloud you jumped from
         if (springy) S.onPl.squish = 14;
       }
       p.vy += 0.75; if (p.vy > 16) p.vy = 16;
       const prevY = p.y;
-      p.x += p.vx; p.y += p.vy;
+      p.x += p.vx + (p.cvx || 0); p.y += p.vy;
       p.x = Math.max(40, Math.min(L.width - 60, p.x));
       p.onGround = false; S.onPl = null;
       const overPit = S.pits.some(pt => p.x > pt.x + 12 && p.x < pt.x + pt.w - 12);
-      if (!overPit && p.y >= GROUND && prevY <= GROUND + 4) { p.y = GROUND; p.vy = 0; p.onGround = true; }
+      if (!overPit && p.y >= GROUND && prevY <= GROUND + 4) {
+        p.y = GROUND; p.vy = 0; p.onGround = true;
+        for (const pl of S.plats) if (pl.raft) pl.active = false;
+      }
       for (const pl of S.plats) {
+        if (pl.raft && !overPit) continue;
         if (p.vy >= 0 && prevY <= pl.pcy + 2 && p.y >= pl.cy && p.x > pl.cx - 18 && p.x < pl.cx + pl.w + 18) {
           if (pl.cloud && prevY < pl.pcy - 1) pl.squish = 10;
           p.y = pl.cy; p.vy = 0; p.onGround = true; S.onPl = pl;
+          if (pl.raft && !pl.active) { pl.active = true; toast('All aboard the cookie raft!'); }
+        }
+      }
+      if (p.onGround) p.cvx = 0;
+      // stay aboard the raft (even mid-jump) until it reaches the far shore
+      const R = S.onPl && S.onPl.raft ? S.onPl : (!p.onGround ? p.raft : null);
+      if (R && R.active && Math.abs(R.cx - R.x2) > 1) p.x = Math.max(R.cx + 14, Math.min(R.cx + R.w - 14, p.x));
+      if (p.onGround) p.raft = S.onPl && S.onPl.raft ? S.onPl : null;
+      // caramel bubbles pop up out of the lake
+      for (const b of (L.bubbles || [])) {
+        const ph = (S.t + b.p) % 150;
+        if (ph < 60 && !p.hurt) {
+          const by = GROUND - Math.sin(ph / 60 * Math.PI) * 95;
+          if (Math.abs(p.x - b.x) < 30 && Math.abs((p.y - 40) - by) < 42) {
+            S.hp = Math.max(1, S.hp - 1); p.hurt = 60; hud(); toast('Sticky! Jump over the bubbles.');
+          }
         }
       }
       if (p.onGround && !S.onPl && !S.pits.some(pt => p.x > pt.x - 70 && p.x < pt.x + pt.w + 70)) S.lastGroundX = p.x;
       // fell through a gap: lose 1 heart, pop back to safe ground
       if (p.y > H + 60) {
         S.hp = Math.max(0, S.hp - 1); if (S.hp === 0) S.hp = 10;
-        p.x = S.lastGroundX; p.y = GROUND; p.vy = 0; p.hurt = 60; p.onGround = true;
-        S.trail.length = 0; toast('Whoops! Into the cream. Try that jump again.'); hud();
+        p.x = S.lastGroundX; p.y = GROUND; p.vy = 0; p.hurt = 60; p.onGround = true; p.cvx = 0;
+        for (const pl of S.plats) if (pl.raft) pl.active = false;
+        S.trail.length = 0; toast(L.lake ? 'Splash! Back to the shore. Ride the raft again.' : 'Whoops! Into the cream. Try that jump again.'); hud();
       }
       // Pip pads: launch to the high shortcut
       for (const pad of L.pads) {
@@ -627,7 +750,7 @@ button { font: inherit; cursor: pointer; }
       for (const it of S.items) {
         if (it.got) continue;
         // Pip's magnet: nearby stars drift toward the hero
-        if (L.sidekick && it.k === 'star') {
+        if (L.sidekick && (it.k === 'star' || it.k === 'coin')) {
           const dx = p.x - it.x, dy = (p.y - 40) - it.y, d = Math.hypot(dx, dy);
           if (d < 150) { it.x += dx * 0.12; it.y += dy * 0.12; }
         }
@@ -674,11 +797,32 @@ button { font: inherit; cursor: pointer; }
     roundRect(g, x, y - h * 0.35, w, h * 0.7, h * 0.35); g.fill();
   }
   function drawSky() {
+    const lake = S.L.lake;
     const sky = ctx.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, '#f7b7a3'); sky.addColorStop(0.55, '#ffe3d6'); sky.addColorStop(1, '#fff1dc');
+    if (lake) { sky.addColorStop(0, '#f4a259'); sky.addColorStop(0.5, '#ffd8a8'); sky.addColorStop(1, '#fff1dc'); }
+    else { sky.addColorStop(0, '#f7b7a3'); sky.addColorStop(0.55, '#ffe3d6'); sky.addColorStop(1, '#fff1dc'); }
     ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = 'rgba(255,248,238,.9)'; ctx.beginPath(); ctx.arc(780 - S.camX * 0.05, 110, 46, 0, Math.PI * 2); ctx.fill();
-    for (let i = 0; i < 10; i++) {
+    ctx.fillStyle = lake ? 'rgba(255,236,190,.95)' : 'rgba(255,248,238,.9)';
+    ctx.beginPath(); ctx.arc(780 - S.camX * 0.05, lake ? 170 : 110, 46, 0, Math.PI * 2); ctx.fill();
+    if (lake) {
+      // far hills and bake-sale bunting
+      for (let i = 0; i < 9; i++) {
+        const hx = ((i * 520 - S.camX * 0.25) % 4680 + 4680) % 4680 - 300;
+        if (hx > W + 300) continue;
+        ctx.fillStyle = i % 2 ? '#c98a4a' : '#b5763a';
+        ctx.beginPath(); ctx.ellipse(hx, 330, 300, 120 + (i % 3) * 20, 0, Math.PI, 0); ctx.fill();
+      }
+      ctx.fillStyle = '#e9b97a'; ctx.fillRect(0, 300, W, 30);
+      const fo = -(S.camX * 0.6) % 48;
+      ctx.strokeStyle = '#7a4320'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(0, 40); for (let x = fo - 48; x < W + 48; x += 48) ctx.quadraticCurveTo(x + 24, 56, x + 48, 40); ctx.stroke();
+      const flagCols = ['#9c2b3a', '#e9782a', '#4f7a3a', '#fff8ee'];
+      for (let x = fo - 48, k = Math.floor(S.camX * 0.6 / 48); x < W + 48; x += 48, k++) {
+        ctx.fillStyle = flagCols[((k % 4) + 4) % 4];
+        ctx.beginPath(); ctx.moveTo(x + 14, 47); ctx.lineTo(x + 34, 47); ctx.lineTo(x + 24, 68); ctx.closePath(); ctx.fill();
+      }
+    }
+    for (let i = 0; i < (lake ? 4 : 10); i++) {
       const bx = ((i * 430 - S.camX * 0.3) % 4300 + 4300) % 4300 - 300;
       if (bx > W + 50) continue;
       cloudBlob(ctx, bx, 120 + (i % 3) * 60, 180, 40, 'rgba(255,250,242,.6)');
@@ -691,13 +835,28 @@ button { font: inherit; cursor: pointer; }
     for (let x = cOff; x < W; x += 160) ctx.fillRect(x + 10, GROUND + 28, 140, 52);
     for (const pt of S.pits) {
       const x = pt.x - S.camX; if (x + pt.w < 0 || x > W) continue;
+      if (pt.caramel) {
+        const cg = ctx.createLinearGradient(0, GROUND, 0, H);
+        cg.addColorStop(0, '#d48a3a'); cg.addColorStop(1, '#8a4a1a');
+        ctx.fillStyle = cg; ctx.fillRect(x, GROUND + 6, pt.w, H - GROUND);
+        ctx.fillStyle = sky; ctx.fillRect(x, GROUND - 1, pt.w, 7);
+        ctx.strokeStyle = 'rgba(255,226,181,.55)'; ctx.lineWidth = 2;
+        for (let r = 0; r < 3; r++) {
+          const yy = GROUND + 22 + r * 22;
+          ctx.beginPath();
+          for (let xx = 0; xx <= pt.w; xx += 12) ctx.lineTo(x + xx, yy + Math.sin((xx + S.t * 1.5 + r * 40) * 0.06) * 3);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#9c2b3a'; ctx.fillRect(x - 4, GROUND, 4, H - GROUND); ctx.fillRect(x + pt.w, GROUND, 4, H - GROUND);
+        continue;
+      }
       ctx.fillStyle = sky; ctx.fillRect(x, GROUND - 1, pt.w, H - GROUND + 1);
       cloudBlob(ctx, x + 6, H - 10, pt.w - 12, 34, '#fffaf2');
       ctx.fillStyle = '#9c2b3a'; ctx.fillRect(x - 4, GROUND, 4, H - GROUND); ctx.fillRect(x + pt.w, GROUND, 4, H - GROUND);
     }
   }
   function drawBG() {
-    if (S.L.sky) return drawSky();
+    if (S.L.sky || S.L.lake) return drawSky();
     const T = S.L.theme;
     ctx.fillStyle = T.wall; ctx.fillRect(0, 0, W, H);
     const off = -(S.camX * 0.5) % 60;
@@ -784,6 +943,20 @@ button { font: inherit; cursor: pointer; }
         for (let q = 0; q < 4; q++) { ctx.beginPath(); ctx.arc(bx - 12 + q * 8, -38 - (q % 2) * 5, 6, 0, Math.PI * 2); ctx.fill(); }
       }
       signY = -150;
+    } else if (c.kind === 'booth') {
+      ctx.fillStyle = '#a5662a'; ctx.fillRect(-80, -150, 8, 150); ctx.fillRect(72, -150, 8, 150);
+      for (let k = 0; k < 8; k++) {
+        ctx.fillStyle = k % 2 ? '#fff8ee' : '#9c2b3a';
+        ctx.beginPath(); ctx.moveTo(-90 + k * 22.5, -170); ctx.lineTo(-90 + (k + 1) * 22.5, -170); ctx.lineTo(-90 + (k + 1) * 22.5, -146);
+        ctx.arc(-90 + k * 22.5 + 11.25, -146, 11.25, 0, Math.PI); ctx.closePath(); ctx.fill();
+      }
+      ctx.fillStyle = '#c9863a'; ctx.fillRect(-84, -64, 168, 64);
+      ctx.fillStyle = '#b06a32'; ctx.fillRect(-84, -64, 168, 10);
+      drawMiniPie(ctx, -40, -70, 1); drawMiniPie(ctx, 40, -70, 1);
+      ctx.fillStyle = '#fff8ee'; roundRect(ctx, -26, -46, 52, 26, 6); ctx.fill();
+      ctx.fillStyle = '#9c2b3a'; ctx.font = '15px "Lilita One", sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(done ? 'SOLD' : 'PIES', 0, -27);
+      signY = -214;
     } else if (c.kind === 'stand') {
       ctx.fillStyle = '#d9c3a0'; ctx.fillRect(-6, -70, 12, 70);
       ctx.beginPath(); ctx.ellipse(0, -2, 34, 7, 0, 0, Math.PI * 2); ctx.fill();
@@ -819,6 +992,12 @@ button { font: inherit; cursor: pointer; }
       ctx.beginPath(); ctx.ellipse(-6, 0, 10, 12, 0, 0, Math.PI * 2); ctx.ellipse(6, 0, 10, 12, 0, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#d7671f'; ctx.beginPath(); ctx.ellipse(0, 0, 8, 13, 0, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#4f7a3a'; ctx.fillRect(-2, -18, 4, 8);
+    } else if (it.k === 'coin') {
+      const sx = Math.abs(Math.cos((S.t + it.x) * 0.06));
+      ctx.scale(Math.max(0.2, sx), 1);
+      ctx.fillStyle = '#e8b25c'; ctx.strokeStyle = '#a5662a'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#a5662a'; ctx.font = '13px "Lilita One", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('¢', 0, 5);
     } else {
       ctx.fillStyle = '#ffd08a'; ctx.strokeStyle = '#c9863a'; ctx.lineWidth = 2;
       ctx.beginPath();
@@ -846,6 +1025,23 @@ button { font: inherit; cursor: pointer; }
     }
   }
 
+  function drawBubble(b) {
+    const x = b.x - S.camX; if (x < -60 || x > W + 60) return;
+    const ph = (S.t + b.p) % 150;
+    if (ph < 60) {
+      const by = GROUND - Math.sin(ph / 60 * Math.PI) * 95;
+      ctx.fillStyle = '#c97b2a'; ctx.beginPath(); ctx.arc(x, by, 20, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#e8a55a'; ctx.beginPath(); ctx.arc(x - 6, by - 6, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fff1dc'; ctx.beginPath(); ctx.arc(x - 8, by - 9, 3, 0, Math.PI * 2); ctx.fill();
+    } else if (ph > 115) {
+      // warning: the caramel starts to bubble just before it pops
+      const k = (ph - 115) / 35;
+      ctx.strokeStyle = `rgba(255,226,181,${0.4 + k * 0.5})`; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.ellipse(x, GROUND + 10, 14 + k * 14, 4 + k * 3, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = '#c97b2a'; ctx.beginPath(); ctx.arc(x, GROUND + 8 - k * 6, 5 + k * 6, Math.PI, 0); ctx.fill();
+    }
+  }
+
   function drawPads() {
     for (const pad of S.L.pads) {
       const x = pad.x - S.camX; if (x < -80 || x > W + 80) continue;
@@ -864,7 +1060,19 @@ button { font: inherit; cursor: pointer; }
   function drawPlatforms() {
     for (const pl of S.plats) {
       const x = pl.cx - S.camX; if (x + pl.w < -20 || x > W + 20) continue;
-      if (pl.cloud) {
+      if (pl.raft) {
+        // chocolate-chip cookie raft with a napkin sail
+        const bob = Math.sin(S.t * 0.08) * 2;
+        ctx.save(); ctx.translate(x, pl.cy + bob);
+        ctx.fillStyle = '#a5662a'; ctx.beginPath(); ctx.ellipse(pl.w / 2, 8, pl.w / 2 + 4, 14, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#d9a35a'; ctx.beginPath(); ctx.ellipse(pl.w / 2, 2, pl.w / 2, 11, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#4a2810';
+        [[0.2, 0], [0.4, 4], [0.62, -2], [0.8, 3], [0.5, -4]].forEach(([fx, fy]) => { ctx.beginPath(); ctx.ellipse(pl.w * fx, 2 + fy, 5, 3, 0, 0, Math.PI * 2); ctx.fill(); });
+        ctx.fillStyle = '#7a4320'; ctx.fillRect(pl.w - 30, -70, 4, 70);
+        ctx.fillStyle = '#fff8ee'; ctx.beginPath(); ctx.moveTo(pl.w - 26, -68); ctx.lineTo(pl.w + 8, -38); ctx.lineTo(pl.w - 26, -18); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#9c2b3a'; ctx.fillRect(pl.w - 26, -46, 14, 4);
+        ctx.restore();
+      } else if (pl.cloud) {
         const sq = pl.squish ? Math.sin(pl.squish * 0.5) * 5 : 0;
         ctx.save(); ctx.translate(0, pl.cy + 14 + sq);
         cloudBlob(ctx, x - 6, 0, pl.w + 12, 30 - sq, '#f1e3c8');
@@ -901,6 +1109,7 @@ button { font: inherit; cursor: pointer; }
     drawPads();
     S.L.clues.forEach(drawStation);
     S.L.steam.forEach(drawSteam);
+    (S.L.bubbles || []).forEach(drawBubble);
     S.items.forEach(it => !it.got && drawItem(it));
     const p = S.p;
     if (S.L.sidekick) drawPip(ctx, S.pip.x - S.camX, S.pip.y, 1.15, S.pip.face, S.t, { moving: S.pip.moving });
@@ -915,7 +1124,7 @@ button { font: inherit; cursor: pointer; }
     ctx.fillStyle = '#e9782a'; roundRect(ctx, 260, H - 22, Math.max(10, 440 * Math.min(1, p.x / S.L.clues[2].x)), 10, 5); ctx.fill();
     if (S.mode === 'play' && S.toast) banner(S.toast.text);
     else if (S.mode === 'play' && S.t < 240 && S.solved === 0)
-      banner(S.L.sky ? 'Jump onto the cream clouds to cross the gaps! →' : S.L.sidekick ? 'Pip is with you! Head right →' : 'Head right to the first clue! →');
+      banner(S.L.tip ? S.L.tip : S.L.sky ? 'Jump onto the cream clouds to cross the gaps! →' : S.L.sidekick ? 'Pip is with you! Head right →' : 'Head right to the first clue! →');
     if (S.mode === 'bake') banner(S.L.bakeText);
   }
 
