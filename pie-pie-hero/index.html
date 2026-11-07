@@ -69,6 +69,14 @@ button { font: inherit; cursor: pointer; }
 .twist strong { font-family: var(--display); font-weight: 400; font-size: clamp(14px, 2.4vw, 18px); color: var(--berry); }
 .twist span { font-size: clamp(11px, 1.8vw, 13px); line-height: 1.35; }
 .twist[aria-pressed="true"] { background: #ffe2b5; box-shadow: 0 0 0 3px var(--pumpkin) inset; }
+.finale { display: flex; flex-direction: column; gap: 8px; }
+.words { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.word { border: 3px solid var(--ink); border-radius: 12px; background: #fff; padding: 6px 4px; text-align: center; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.word small { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--crust); }
+.word b { font-family: var(--display); font-weight: 400; font-size: clamp(18px, 4vw, 26px); color: var(--berry); letter-spacing: 2px; }
+.word span { font-size: 11px; }
+.recipe { background: #fff; border: 2px dashed var(--crust); border-radius: 12px; padding: 10px 12px; }
+@media (max-width: 420px) { .words { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .pickline { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-weight: 800; }
 .pickline code { background: #fff; border: 2px dashed var(--crust); border-radius: 8px; padding: 4px 8px; font-family: var(--body); user-select: all; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -122,7 +130,8 @@ button { font: inherit; cursor: pointer; }
       <button class="tab" role="tab" id="tab1" data-level="0" aria-selected="false">Level 1</button>
       <button class="tab" role="tab" id="tab2" data-level="1" aria-selected="false">Level 2</button>
       <button class="tab" role="tab" id="tab3" data-level="2" aria-selected="false">Level 3</button>
-      <button class="tab" role="tab" id="tab4" data-level="3" aria-selected="true">Level 4<span class="new">NEW</span></button>
+      <button class="tab" role="tab" id="tab4" data-level="3" aria-selected="false">Level 4</button>
+      <button class="tab" role="tab" id="tab5" data-level="4" aria-selected="true">Level 5<span class="new">FINALE</span></button>
     </div>
     <span class="eyebrow" id="introEyebrow">Your hero</span>
     <div class="intro">
@@ -159,6 +168,11 @@ button { font: inherit; cursor: pointer; }
     <h2 id="winTitle">Done!</h2>
     <p id="winText"></p>
     <p id="score"></p>
+    <div class="finale" id="finale" hidden>
+      <span class="eyebrow" id="finaleHeading">All 5 code words</span>
+      <div class="words" id="finaleWords"></div>
+      <p class="recipe" id="finaleRecipe"></p>
+    </div>
     <span class="eyebrow" id="twistEyebrow">Pick one twist for the next level</span>
     <div class="twists" id="twists"></div>
     <div class="pickline" id="pickline" hidden>
@@ -479,6 +493,59 @@ button { font: inherit; cursor: pointer; }
         ['Jelly Bean Jungle', 'Swing through a jelly bean jungle. Adds sorting and bar graph puzzles.'],
       ],
     },
+    {
+      name: 'Level 5', subtitle: 'Level 5 · Gingerbread Express',
+      width: 4200, sidekick: true, ginger: true,
+      tip: 'Climb aboard the Gingerbread Express! →',
+      boardText: 'All aboard the Gingerbread Express!',
+      theme: { wall: '#f2b8a0', tile: 'rgba(0,0,0,0)', band: '#9c2b3a', lower: '#fff1dc', sky: '#bfe3f2', sun: '#e9782a', patch: false },
+      intro: {
+        eyebrow: 'Gingerbread Express · Finale', title: 'The last stop!',
+        stats: [['HP', '10/10'], ['Sidekick', 'Pip the pumpkin'], ['Power', 'Subtraction with regrouping'], ['Express train', 'Walk onto the roof and it carries you across'], ['Watch out', 'Gumdrops bounce out of the canyon. Jump over them!']],
+        text: 'The last page of the Missing Pie Recipe is at Gingerbread Station. Ride the Gingerbread Express over the frosting canyons, solve 3 subtraction clues, and close the case for good.',
+      },
+      start: { eggs: 4, pumpkins: 4 },
+      clues: [
+        { x: 650, kind: 'depot', title: 'The Cookie Delivery', eyebrow: 'Clue 1 · Subtraction with regrouping', fig: { type: 'blocks', n: 52 },
+          story: 'The Gingerbread Express carries 52 gingerbread cookies. 17 are delivered at the first stop. How many cookies are left on the train?',
+          a: 52, b: 17, op: '−', answer: 35, options: [35, 45, 69], letter: 'W',
+          hint: 'You can\'t take 7 from 2. Trade 1 ten for 10 ones: 12 − 7 = 5. Now 4 tens − 1 ten = 3 tens. That makes 35.' },
+        { x: 2250, kind: 'depot', title: 'The Candy Cane Stop', eyebrow: 'Clue 2 · Subtraction with regrouping', fig: { type: 'blocks', n: 64 },
+          story: 'Gingerbread Station has 64 candy canes. Pip hangs 28 of them on the train. How many candy canes are still at the station?',
+          a: 64, b: 28, op: '−', answer: 36, options: [36, 44, 92], letter: 'I',
+          hint: 'You can\'t take 8 from 4. Trade 1 ten for 10 ones: 14 − 8 = 6. Now 5 tens − 2 tens = 3 tens. That makes 36.' },
+        { x: 3950, kind: 'depot', final: true, title: 'The Last Page', eyebrow: 'Clue 3 · Subtraction with regrouping', fig: { type: 'blocks', n: 91 },
+          story: 'The Gingerbread Express has 91 seats. 46 seats are filled with pie fans. How many seats are empty?',
+          a: 91, b: 46, op: '−', answer: 45, options: [45, 55, 137], letter: 'N',
+          hint: 'You can\'t take 6 from 1. Trade 1 ten for 10 ones: 11 − 6 = 5. Now 8 tens − 4 tens = 4 tens. That makes 45.' },
+      ],
+      pits: [ { x: 850, w: 800, canyon: true }, { x: 2450, w: 1000, canyon: true } ],
+      platforms: [
+        { x: 860, x2: 1340, y: GROUND, w: 300, raft: true, train: true },
+        { x: 2460, x2: 3140, y: GROUND, w: 300, raft: true, train: true },
+        { x: 2000, y: 350, w: 150 }, { x: 3600, y: 350, w: 150 },
+      ],
+      steam: [ { x: 1900, p: 30 }, { x: 3750, p: 90 } ],
+      bubbles: [ { x: 1150, p: 0 }, { x: 1430, p: 80 }, { x: 2720, p: 20 }, { x: 2980, p: 100 }, { x: 3230, p: 55 } ],
+      pads: [],
+      items: [
+        ...[200, 260, 320, 380, 1750, 1810, 2420, 3500, 4100].map(x => [x, GROUND - 40, 'star']),
+        ...[1000, 1250, 1500, 2600, 2850, 3100, 3350].map(x => [x, GROUND - 130, 'star']),
+        [2075, 300, 'egg'], [3675, 300, 'pumpkin'], [480, GROUND - 40, 'egg'],
+      ],
+      bakeText: 'Code word WIN! The last page of the recipe!',
+      win: {
+        eyebrow: 'Level 5 complete · Case closed!',
+        title: 'The Missing Pie Recipe is found!',
+        text: 'You subtracted your way to <b>35</b> cookies, <b>36</b> candy canes and <b>45</b> empty seats. Code word: <b>WIN</b>.',
+      },
+      twists: [],
+      finale: {
+        heading: 'All 5 code words',
+        words: [['Level 1', 'PIE', 'Addition'], ['Level 2', 'YUM', 'Multiplication'], ['Level 3', 'TOP', 'Fractions'], ['Level 4', 'BUY', 'Money'], ['Level 5', 'WIN', 'Subtraction']],
+        recipe: 'The recipe: 59 spoonfuls of pumpkin, 84 pinches of spice, 2 eggs per pie, bake at 375°F, then whipped cream on top. Pie Pie Hero and Pip solved the case!',
+      },
+    },
   ];
 
   /* ---------- State ---------- */
@@ -538,7 +605,11 @@ button { font: inherit; cursor: pointer; }
     $('clueStory').textContent = c.story;
     $('clueSum').textContent = c.sumText || `${c.a} ${c.op} ${c.b} = ?`;
     const fig = $('clueFig');
-    if (c.fig && c.fig.type === 'coins') {
+    if (c.fig && c.fig.type === 'blocks') {
+      fig.width = 320; fig.height = 150; fig.classList.add('coins');
+      fig.setAttribute('aria-label', `${c.fig.n} shown as ${Math.floor(c.fig.n / 10)} tens and ${c.fig.n % 10} ones`);
+      drawBlocks(fig.getContext('2d'), c.fig.n); fig.hidden = false;
+    } else if (c.fig && c.fig.type === 'coins') {
       fig.width = 320; fig.height = 150; fig.classList.add('coins');
       fig.setAttribute('aria-label', 'Money picture for this clue');
       drawCoins(fig.getContext('2d'), c.fig); fig.hidden = false;
@@ -582,6 +653,28 @@ button { font: inherit; cursor: pointer; }
     });
     $('clueScreen').hidden = false;
     box.querySelector('button').focus({ preventScroll: true });
+  }
+
+  // Base-ten blocks: tens rods and ones cubes for the starting number.
+  function drawBlocks(g, n) {
+    g.clearRect(0, 0, 320, 150);
+    const tens = Math.floor(n / 10), ones = n % 10, u = 9;
+    const totalW = tens * (u + 6) + (ones ? 16 + Math.ceil(ones / 3) * (u + 3) : 0);
+    let x = (320 - totalW) / 2;
+    for (let t = 0; t < tens; t++) {
+      for (let k = 0; k < 10; k++) {
+        g.fillStyle = '#e9782a'; g.fillRect(x, 14 + k * u, u, u - 1);
+        g.strokeStyle = '#9c4a14'; g.lineWidth = 1; g.strokeRect(x + .5, 14 + k * u + .5, u - 1, u - 2);
+      }
+      x += u + 6;
+    }
+    x += 16;
+    for (let o = 0; o < ones; o++) {
+      const col = Math.floor(o / 3), row = o % 3;
+      g.fillStyle = '#4f7a3a'; g.fillRect(x + col * (u + 3), 14 + 90 - (row + 1) * (u + 3), u, u);
+    }
+    g.fillStyle = '#3b1f12'; g.font = '14px "Nunito", sans-serif'; g.textAlign = 'center';
+    g.fillText(`${n} = ${tens} tens and ${ones} ones`, 160, 134);
   }
 
   // US coins (labelled with their value) or a $1 bill next to a price tag.
@@ -704,7 +797,7 @@ button { font: inherit; cursor: pointer; }
         if (p.vy >= 0 && prevY <= pl.pcy + 2 && p.y >= pl.cy && p.x > pl.cx - 18 && p.x < pl.cx + pl.w + 18) {
           if (pl.cloud && prevY < pl.pcy - 1) pl.squish = 10;
           p.y = pl.cy; p.vy = 0; p.onGround = true; S.onPl = pl;
-          if (pl.raft && !pl.active) { pl.active = true; toast('All aboard the cookie raft!'); }
+          if (pl.raft && !pl.active) { pl.active = true; toast(L.boardText || 'All aboard the cookie raft!'); }
         }
       }
       if (p.onGround) p.cvx = 0;
@@ -718,7 +811,7 @@ button { font: inherit; cursor: pointer; }
         if (ph < 60 && !p.hurt) {
           const by = GROUND - Math.sin(ph / 60 * Math.PI) * 95;
           if (Math.abs(p.x - b.x) < 30 && Math.abs((p.y - 40) - by) < 42) {
-            S.hp = Math.max(1, S.hp - 1); p.hurt = 60; hud(); toast('Sticky! Jump over the bubbles.');
+            S.hp = Math.max(1, S.hp - 1); p.hurt = 60; hud(); toast(L.ginger ? 'Boing! Jump over the gumdrops.' : 'Sticky! Jump over the bubbles.');
           }
         }
       }
@@ -728,7 +821,7 @@ button { font: inherit; cursor: pointer; }
         S.hp = Math.max(0, S.hp - 1); if (S.hp === 0) S.hp = 10;
         p.x = S.lastGroundX; p.y = GROUND; p.vy = 0; p.hurt = 60; p.onGround = true; p.cvx = 0;
         for (const pl of S.plats) if (pl.raft) pl.active = false;
-        S.trail.length = 0; toast(L.lake ? 'Splash! Back to the shore. Ride the raft again.' : 'Whoops! Into the cream. Try that jump again.'); hud();
+        S.trail.length = 0; toast(L.ginger ? 'Oops! Back to the station. Ride the train again.' : L.lake ? 'Splash! Back to the shore. Ride the raft again.' : 'Whoops! Into the cream. Try that jump again.'); hud();
       }
       // Pip pads: launch to the high shortcut
       for (const pad of L.pads) {
@@ -797,13 +890,39 @@ button { font: inherit; cursor: pointer; }
     roundRect(g, x, y - h * 0.35, w, h * 0.7, h * 0.35); g.fill();
   }
   function drawSky() {
-    const lake = S.L.lake;
+    const lake = S.L.lake, ginger = S.L.ginger;
     const sky = ctx.createLinearGradient(0, 0, 0, H);
-    if (lake) { sky.addColorStop(0, '#f4a259'); sky.addColorStop(0.5, '#ffd8a8'); sky.addColorStop(1, '#fff1dc'); }
+    if (ginger) { sky.addColorStop(0, '#5b4a7a'); sky.addColorStop(0.5, '#c98aa0'); sky.addColorStop(1, '#f6d5c0'); }
+    else if (lake) { sky.addColorStop(0, '#f4a259'); sky.addColorStop(0.5, '#ffd8a8'); sky.addColorStop(1, '#fff1dc'); }
     else { sky.addColorStop(0, '#f7b7a3'); sky.addColorStop(0.55, '#ffe3d6'); sky.addColorStop(1, '#fff1dc'); }
     ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
     ctx.fillStyle = lake ? 'rgba(255,236,190,.95)' : 'rgba(255,248,238,.9)';
-    ctx.beginPath(); ctx.arc(780 - S.camX * 0.05, lake ? 170 : 110, 46, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(780 - S.camX * 0.05, lake ? 170 : ginger ? 90 : 110, ginger ? 34 : 46, 0, Math.PI * 2); ctx.fill();
+    if (ginger) {
+      // gingerbread village with iced roofs and lit windows
+      for (let i = 0; i < 12; i++) {
+        const hx = ((i * 380 - S.camX * 0.3) % 4560 + 4560) % 4560 - 200;
+        if (hx > W + 120) continue;
+        const hw = 90 + (i % 3) * 20, hh = 70 + (i % 2) * 30, base = 330;
+        ctx.fillStyle = '#9a5a2c'; ctx.fillRect(hx, base - hh, hw, hh);
+        ctx.fillStyle = '#fff8ee';
+        ctx.beginPath(); ctx.moveTo(hx - 12, base - hh + 4); ctx.lineTo(hx + hw / 2, base - hh - 46); ctx.lineTo(hx + hw + 12, base - hh + 4); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#7a4320';
+        ctx.beginPath(); ctx.moveTo(hx - 4, base - hh + 2); ctx.lineTo(hx + hw / 2, base - hh - 38); ctx.lineTo(hx + hw + 4, base - hh + 2); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = '#ffd08a'; ctx.fillRect(hx + 14, base - hh + 18, 18, 18); ctx.fillRect(hx + hw - 32, base - hh + 18, 18, 18);
+        ctx.fillStyle = ['#9c2b3a', '#4f7a3a', '#e9782a'][i % 3]; roundRect(ctx, hx + hw / 2 - 11, base - 34, 22, 34, 10); ctx.fill();
+      }
+      ctx.fillStyle = '#fff8ee'; ctx.fillRect(0, 326, W, 8);
+      // falling snow
+      if (!reduce) {
+        ctx.fillStyle = 'rgba(255,255,255,.8)';
+        for (let i = 0; i < 60; i++) {
+          const sx = ((i * 157 + S.t * (0.4 + (i % 3) * 0.2) - S.camX * 0.2) % (W + 40) + W + 40) % (W + 40) - 20;
+          const sy = ((i * 89 + S.t * (0.8 + (i % 4) * 0.3)) % (GROUND + 20)) - 10;
+          ctx.beginPath(); ctx.arc(sx, sy, 1.5 + (i % 3), 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    }
     if (lake) {
       // far hills and bake-sale bunting
       for (let i = 0; i < 9; i++) {
@@ -822,7 +941,7 @@ button { font: inherit; cursor: pointer; }
         ctx.beginPath(); ctx.moveTo(x + 14, 47); ctx.lineTo(x + 34, 47); ctx.lineTo(x + 24, 68); ctx.closePath(); ctx.fill();
       }
     }
-    for (let i = 0; i < (lake ? 4 : 10); i++) {
+    for (let i = 0; i < (ginger ? 0 : lake ? 4 : 10); i++) {
       const bx = ((i * 430 - S.camX * 0.3) % 4300 + 4300) % 4300 - 300;
       if (bx > W + 50) continue;
       cloudBlob(ctx, bx, 120 + (i % 3) * 60, 180, 40, 'rgba(255,250,242,.6)');
@@ -833,8 +952,29 @@ button { font: inherit; cursor: pointer; }
     const cOff = -S.camX % 160;
     ctx.fillStyle = 'rgba(255,255,255,.12)';
     for (let x = cOff; x < W; x += 160) ctx.fillRect(x + 10, GROUND + 28, 140, 52);
+    if (ginger) {
+      ctx.fillStyle = '#fff8ee'; ctx.fillRect(0, GROUND - 3, W, 7);
+      for (let x = cOff; x < W + 160; x += 40) { ctx.beginPath(); ctx.arc(x, GROUND + 4, 6, 0, Math.PI); ctx.fill(); }
+    }
     for (const pt of S.pits) {
       const x = pt.x - S.camX; if (x + pt.w < 0 || x > W) continue;
+      if (pt.canyon) {
+        const cg = ctx.createLinearGradient(0, GROUND, 0, H);
+        cg.addColorStop(0, '#6b4a8a'); cg.addColorStop(1, '#3b2a55');
+        ctx.fillStyle = sky; ctx.fillRect(x, GROUND - 1, pt.w, H - GROUND + 1);
+        ctx.fillStyle = cg; ctx.fillRect(x, GROUND + 40, pt.w, H - GROUND);
+        // frosting drips on the canyon walls
+        ctx.fillStyle = '#fff8ee';
+        for (let d = 0; d < 3; d++) { roundRect(ctx, x - 4, GROUND + 14 + d * 22, 10, 14, 5); ctx.fill(); roundRect(ctx, x + pt.w - 6, GROUND + 20 + d * 22, 10, 14, 5); ctx.fill(); }
+        // trestle and rails the train runs on
+        const ry = GROUND + 62;
+        ctx.strokeStyle = '#7a4320'; ctx.lineWidth = 4;
+        for (let tx = x + 30; tx < x + pt.w; tx += 90) { ctx.beginPath(); ctx.moveTo(tx, ry); ctx.lineTo(tx - 20, H); ctx.moveTo(tx, ry); ctx.lineTo(tx + 20, H); ctx.stroke(); }
+        ctx.fillStyle = '#9a5a2c'; for (let tx = x; tx < x + pt.w; tx += 18) ctx.fillRect(tx, ry, 10, 6);
+        ctx.fillStyle = '#c9ccd0'; ctx.fillRect(x, ry - 2, pt.w, 3);
+        ctx.fillStyle = '#9c2b3a'; ctx.fillRect(x - 4, GROUND, 4, H - GROUND); ctx.fillRect(x + pt.w, GROUND, 4, H - GROUND);
+        continue;
+      }
       if (pt.caramel) {
         const cg = ctx.createLinearGradient(0, GROUND, 0, H);
         cg.addColorStop(0, '#d48a3a'); cg.addColorStop(1, '#8a4a1a');
@@ -856,7 +996,7 @@ button { font: inherit; cursor: pointer; }
     }
   }
   function drawBG() {
-    if (S.L.sky || S.L.lake) return drawSky();
+    if (S.L.sky || S.L.lake || S.L.ginger) return drawSky();
     const T = S.L.theme;
     ctx.fillStyle = T.wall; ctx.fillRect(0, 0, W, H);
     const off = -(S.camX * 0.5) % 60;
@@ -943,6 +1083,24 @@ button { font: inherit; cursor: pointer; }
         for (let q = 0; q < 4; q++) { ctx.beginPath(); ctx.arc(bx - 12 + q * 8, -38 - (q % 2) * 5, 6, 0, Math.PI * 2); ctx.fill(); }
       }
       signY = -150;
+    } else if (c.kind === 'depot') {
+      // gingerbread station with a candy-cane post
+      const big = c.final ? 1.25 : 1;
+      ctx.save(); ctx.scale(big, big);
+      ctx.fillStyle = '#9a5a2c'; ctx.fillRect(-80, -120, 160, 120);
+      ctx.fillStyle = '#fff8ee';
+      ctx.beginPath(); ctx.moveTo(-96, -116); ctx.lineTo(0, -176); ctx.lineTo(96, -116); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#7a4320';
+      ctx.beginPath(); ctx.moveTo(-86, -118); ctx.lineTo(0, -168); ctx.lineTo(86, -118); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = done ? '#ffd08a' : '#5b4a7a'; roundRect(ctx, -22, -70, 44, 70, 18); ctx.fill();
+      ctx.fillStyle = '#ffd08a'; ctx.fillRect(-64, -96, 26, 24); ctx.fillRect(38, -96, 26, 24);
+      ['#9c2b3a', '#4f7a3a', '#e9782a', '#9c2b3a', '#4f7a3a'].forEach((col, k) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(-60 + k * 30, -120, 6, 0, Math.PI * 2); ctx.fill(); });
+      ctx.restore();
+      ctx.strokeStyle = '#fff8ee'; ctx.lineWidth = 8; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-118, 0); ctx.lineTo(-118, -80); ctx.arc(-106, -80, 12, Math.PI, 0); ctx.stroke();
+      ctx.strokeStyle = '#9c2b3a'; ctx.lineWidth = 8; ctx.setLineDash([6, 8]);
+      ctx.beginPath(); ctx.moveTo(-118, 0); ctx.lineTo(-118, -80); ctx.arc(-106, -80, 12, Math.PI, 0); ctx.stroke(); ctx.setLineDash([]);
+      signY = c.final ? -262 : -214;
     } else if (c.kind === 'booth') {
       ctx.fillStyle = '#a5662a'; ctx.fillRect(-80, -150, 8, 150); ctx.fillRect(72, -150, 8, 150);
       for (let k = 0; k < 8; k++) {
@@ -1028,7 +1186,18 @@ button { font: inherit; cursor: pointer; }
   function drawBubble(b) {
     const x = b.x - S.camX; if (x < -60 || x > W + 60) return;
     const ph = (S.t + b.p) % 150;
-    if (ph < 60) {
+    if (ph < 60 && S.L.ginger) {
+      // bouncing gumdrop
+      const by = GROUND - Math.sin(ph / 60 * Math.PI) * 95;
+      ctx.fillStyle = ['#9c2b3a', '#4f7a3a', '#e9782a'][Math.round(b.x / 10) % 3];
+      ctx.beginPath(); ctx.arc(x, by + 4, 20, Math.PI, 0); ctx.lineTo(x + 22, by + 16); ctx.lineTo(x - 22, by + 16); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,.75)';
+      [[-8, -4], [4, -10], [10, 4], [-2, 8], [-12, 8]].forEach(([dx, dy]) => { ctx.fillRect(x + dx, by + dy, 3, 3); });
+    } else if (ph > 115 && S.L.ginger) {
+      const k = (ph - 115) / 35;
+      ctx.fillStyle = `rgba(255,248,238,${0.4 + k * 0.5})`;
+      ctx.beginPath(); ctx.arc(x, GROUND + 6, 6 + k * 8, Math.PI, 0); ctx.fill();
+    } else if (ph < 60) {
       const by = GROUND - Math.sin(ph / 60 * Math.PI) * 95;
       ctx.fillStyle = '#c97b2a'; ctx.beginPath(); ctx.arc(x, by, 20, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#e8a55a'; ctx.beginPath(); ctx.arc(x - 6, by - 6, 7, 0, Math.PI * 2); ctx.fill();
@@ -1060,7 +1229,43 @@ button { font: inherit; cursor: pointer; }
   function drawPlatforms() {
     for (const pl of S.plats) {
       const x = pl.cx - S.camX; if (x + pl.w < -20 || x > W + 20) continue;
-      if (pl.raft) {
+      if (pl.train) {
+        // Gingerbread Express: the flat iced roof is what you stand on
+        ctx.save(); ctx.translate(x, pl.cy);
+        const w = pl.w, carW = (w - 100) / 2, moving = Math.abs(pl.dx) > 0.1;
+        // cars
+        for (let k = 0; k < 2; k++) {
+          const cx0 = k * (carW + 6);
+          ctx.fillStyle = '#9a5a2c'; roundRect(ctx, cx0, 0, carW, 52, 6); ctx.fill();
+          ctx.fillStyle = '#fff8ee'; ctx.fillRect(cx0, 0, carW, 6);
+          ctx.strokeStyle = '#fff8ee'; ctx.lineWidth = 2.5; ctx.beginPath();
+          for (let zx = cx0 + 4; zx < cx0 + carW - 4; zx += 10) { ctx.lineTo(zx, 44); ctx.lineTo(zx + 5, 48); }
+          ctx.stroke();
+          ctx.fillStyle = '#ffd08a'; roundRect(ctx, cx0 + 10, 14, carW / 2 - 16, 20, 4); ctx.fill(); roundRect(ctx, cx0 + carW / 2 + 6, 14, carW / 2 - 16, 20, 4); ctx.fill();
+        }
+        // locomotive
+        const lx = 2 * (carW + 6);
+        ctx.fillStyle = '#8a4a22'; roundRect(ctx, lx, 0, 88, 52, 8); ctx.fill();
+        ctx.fillStyle = '#fff8ee'; ctx.fillRect(lx, 0, 88, 6);
+        ctx.fillStyle = '#9c2b3a'; ctx.fillRect(lx + 60, -26, 16, 26);
+        ctx.fillStyle = '#fff8ee'; ctx.fillRect(lx + 56, -30, 24, 6);
+        ['#9c2b3a', '#4f7a3a', '#e9782a'].forEach((col, k) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(lx + 16 + k * 16, 30, 6, Math.PI, 0); ctx.fill(); ctx.fillRect(lx + 10 + k * 16, 30, 12, 4); });
+        ctx.fillStyle = '#ffd08a'; ctx.beginPath(); ctx.arc(lx + 88, 30, 8, -Math.PI / 2, Math.PI / 2); ctx.fill();
+        // peppermint wheels
+        for (let wx = 18; wx < w; wx += 46) {
+          ctx.save(); ctx.translate(wx, 58); ctx.rotate(pl.cx * 0.06);
+          ctx.fillStyle = '#fff8ee'; ctx.beginPath(); ctx.arc(0, 0, 9, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#9c2b3a';
+          for (let s = 0; s < 4; s++) { ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, 9, s * Math.PI / 2, s * Math.PI / 2 + Math.PI / 4); ctx.closePath(); ctx.fill(); }
+          ctx.restore();
+        }
+        // smoke puffs while moving
+        if (moving && !reduce) {
+          ctx.fillStyle = 'rgba(255,255,255,.75)';
+          for (let k = 0; k < 3; k++) { const ph = (S.t * 0.04 + k / 3) % 1; ctx.beginPath(); ctx.arc(lx + 68 - ph * 50, -36 - ph * 50, 6 + ph * 10, 0, Math.PI * 2); ctx.fill(); }
+        }
+        ctx.restore();
+      } else if (pl.raft) {
         // chocolate-chip cookie raft with a napkin sail
         const bob = Math.sin(S.t * 0.08) * 2;
         ctx.save(); ctx.translate(x, pl.cy + bob);
@@ -1182,8 +1387,18 @@ button { font: inherit; cursor: pointer; }
     let saved = null; try { saved = localStorage.getItem(pickKey()); } catch (e) {}
     if (saved) choose(saved);
     const hasNext = !!LEVELS[S.li + 1];
-    $('nextBtn').hidden = !hasNext;
+    $('nextBtn').hidden = !hasNext && !L.finale;
     if (hasNext) $('nextBtn').textContent = `Play ${LEVELS[S.li + 1].name}`;
+    // grand finale: no twist to pick, show every code word and the finished recipe
+    const fin = L.finale;
+    $('twistEyebrow').hidden = !!fin; $('twists').hidden = !!fin; $('finale').hidden = !fin;
+    if (fin) {
+      $('finaleHeading').textContent = fin.heading;
+      $('finaleWords').innerHTML = fin.words.map(([lv, w, skill]) => `<div class="word"><small>${lv}</small><b>${w}</b><span>${skill}</span></div>`).join('');
+      $('finaleRecipe').textContent = fin.recipe;
+      $('nextBtn').textContent = 'Play again from Level 1';
+      if (!reduce) for (let i = 0; i < 4; i++) burst(S.p.x - 200 + i * 130, GROUND - 200);
+    }
     $('againBtn').textContent = `Play ${L.name} again`;
     $('winScreen').hidden = false;
     S.nextNum = nextNum;
@@ -1210,7 +1425,7 @@ button { font: inherit; cursor: pointer; }
   }
   $('startBtn').addEventListener('click', () => start(LV));
   $('againBtn').addEventListener('click', () => start(S.li));
-  $('nextBtn').addEventListener('click', () => { selectLevel(S.li + 1); showTitle(); });
+  $('nextBtn').addEventListener('click', () => { selectLevel(LEVELS[S.li + 1] ? S.li + 1 : 0); showTitle(); });
 
   const m = /^#level-(\d)$/.exec(location.hash);
   selectLevel(m && LEVELS[+m[1] - 1] ? +m[1] - 1 : LEVELS.length - 1);
