@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap">
 <style>
-/* Layout: one kitchen-stage card (canvas) with HTML overlays for title, clues and the twist picker; touch pad below on phones. Single warm-kitchen look on purpose. */
+/* Layout: one kitchen-stage card (canvas) with full-screen HTML overlays for title, clues and the twist picker; touch pad below on phones. Single warm-kitchen look on purpose. */
 :root {
   --wall: #fbe9d0;
   --ink: #3b1f12;
@@ -36,41 +36,50 @@ canvas { display: block; width: 100%; height: 100%; touch-action: none; }
 .chip { background: rgba(255,248,238,.92); border: 2px solid var(--ink); border-radius: 999px; padding: 3px 10px; font-weight: 800; font-size: clamp(11px, 1.8vw, 14px); font-variant-numeric: tabular-nums; }
 .chip.code { background: var(--berry); color: var(--cream); border-color: var(--berry); letter-spacing: 3px; }
 .overlay { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: calc(14px + env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) calc(14px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); background: rgba(42,22,13,.72); overflow: auto; }
-.panel { background: var(--cream); border: 4px solid var(--ink); border-radius: 18px; padding: clamp(12px, 3vw, 22px); max-width: 640px; width: 100%; max-height: 100%; overflow: auto; box-shadow: 0 8px 0 var(--ink); display: flex; flex-direction: column; gap: 10px; }
+.panel { background: var(--cream); border: 4px solid var(--ink); border-radius: 18px; padding: clamp(12px, 3vw, 22px); max-width: 640px; width: 100%; box-shadow: 0 8px 0 var(--ink); display: flex; flex-direction: column; gap: 10px; margin: auto 0; }
 .panel h2 { font-family: var(--display); font-weight: 400; font-size: clamp(20px, 4vw, 30px); margin: 0; color: var(--berry); text-wrap: balance; }
 .panel p { margin: 0; line-height: 1.45; font-size: clamp(13px, 2.2vw, 16px); }
 .eyebrow { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--crust); }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tab { font-family: var(--display); font-size: 15px; padding: 6px 14px; border-radius: 999px; border: 3px solid var(--ink); background: #fff; color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--cream); }
+.tab .new { font-family: var(--body); font-weight: 800; font-size: 10px; background: var(--pumpkin); color: var(--cream); border-radius: 6px; padding: 1px 5px; margin-left: 4px; vertical-align: 2px; }
 .intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; align-items: center; }
 .intro canvas { width: 100%; height: auto; aspect-ratio: 1; background: radial-gradient(circle, #ffe2b5 0 55%, transparent 56%); }
 .stats { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: clamp(12px, 2vw, 15px); }
 .stats b { color: var(--berry); }
 .sum { font-family: var(--display); font-size: clamp(34px, 8vw, 58px); text-align: center; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+.dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.dots .grp { display: flex; gap: 3px; padding: 4px 6px; border: 2px dashed var(--crust); border-radius: 10px; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--pumpkin); display: block; }
 .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 button { font: inherit; cursor: pointer; }
 .btn { font-family: var(--display); font-size: clamp(18px, 3.4vw, 26px); padding: 10px 12px; border-radius: 14px; border: 3px solid var(--ink); background: #ffd08a; color: var(--ink); box-shadow: 0 5px 0 var(--ink); transition: transform .08s; }
 .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
-.btn:focus-visible, .twist:focus-visible, .pad button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 3px; }
+.btn:focus-visible, .twist:focus-visible, .tab:focus-visible, .pad button:focus-visible { outline: 3px solid var(--leaf); outline-offset: 3px; }
 .btn.go { background: var(--pumpkin); color: var(--cream); }
 .btn.wrong { background: #f3c4c4; animation: shake .35s; }
 .btn.right { background: #bfe0a8; }
 @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 .hint { font-weight: 800; color: var(--berry); min-height: 1.4em; }
 .twists { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.twist { text-align: left; border: 3px solid var(--ink); border-radius: 14px; background: #fff; padding: 10px; display: flex; flex-direction: column; gap: 4px; color: var(--ink); }
+.twist { text-align: left; border: 3px solid var(--ink); border-radius: 14px; background: #fff; padding: 10px; display: flex; flex-direction: column; gap: 4px; color: var(--ink); -webkit-tap-highlight-color: transparent; }
 .twist strong { font-family: var(--display); font-weight: 400; font-size: clamp(14px, 2.4vw, 18px); color: var(--berry); }
 .twist span { font-size: clamp(11px, 1.8vw, 13px); line-height: 1.35; }
 .twist[aria-pressed="true"] { background: #ffe2b5; box-shadow: 0 0 0 3px var(--pumpkin) inset; }
 .pickline { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-weight: 800; }
 .pickline code { background: #fff; border: 2px dashed var(--crust); border-radius: 8px; padding: 4px 8px; font-family: var(--body); user-select: all; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row .btn { flex: 1 1 200px; }
 .small { font-size: 12px !important; opacity: .8; }
 .pad { display: flex; justify-content: space-between; gap: 12px; }
 .pad .lr { display: flex; gap: 10px; }
-.pad button { width: 72px; height: 64px; border-radius: 16px; border: 3px solid var(--cream); background: var(--berry); color: var(--cream); font-family: var(--display); font-size: 26px; touch-action: none; user-select: none; -webkit-user-select: none; }
+.pad button { width: 72px; height: 64px; border-radius: 16px; border: 3px solid var(--cream); background: var(--berry); color: var(--cream); font-family: var(--display); font-size: 26px; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
 .pad button.jump { width: 120px; background: var(--pumpkin); }
 .help { color: var(--cream); opacity: .8; font-size: 13px; margin: 0; }
 @media (max-width: 560px) {
   .intro { grid-template-columns: 1fr; }
-  .intro canvas { max-width: 140px; justify-self: center; }
+  .intro canvas { max-width: 150px; justify-self: center; }
   .twists { grid-template-columns: 1fr; }
   .overlay { align-items: flex-start; }
 }
@@ -81,7 +90,7 @@ button { font: inherit; cursor: pointer; }
 <div class="wrap">
   <header class="top">
     <h1>Pie Pie Hero</h1>
-    <p>Math Mystery · The Case of the Missing Pie Recipe · Level 1</p>
+    <p id="subtitle">Math Mystery · The Case of the Missing Pie Recipe</p>
   </header>
 
   <div class="stage" id="stage">
@@ -91,62 +100,6 @@ button { font: inherit; cursor: pointer; }
       <span class="chip" id="loot">🥚 2 · 🎃 1 · ✨ 0</span>
       <span class="chip" id="clues">Clues 0/3</span>
       <span class="chip code" id="code">_ _ _</span>
-    </div>
-
-    <!-- Title / meet the hero -->
-    <div class="overlay" id="titleScreen">
-      <div class="panel">
-        <span class="eyebrow">Your hero</span>
-        <div class="intro">
-          <canvas id="portrait" width="320" height="320" aria-label="Pie Pie Hero, a pumpkin pie with a cinnamon stick"></canvas>
-          <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
-            <h2>Meet Pie Pie Hero</h2>
-            <ul class="stats">
-              <li><b>HP</b> 10/10</li>
-              <li><b>Oven heat</b> 350°F</li>
-              <li><b>Power</b> Math solving</li>
-              <li><b>Inventory</b> 2 eggs · 1 pumpkin</li>
-            </ul>
-            <p>Run through the kitchen, dodge the steam, and solve the 3 clues to rebuild the recipe and crack the secret code word.</p>
-          </div>
-        </div>
-        <button class="btn go" id="startBtn">Start Level 1</button>
-        <p class="small">Keys: ← → to move, Space or ↑ to jump. On a phone, use the buttons under the game.</p>
-      </div>
-    </div>
-
-    <!-- Clue -->
-    <div class="overlay" id="clueScreen" hidden>
-      <div class="panel">
-        <span class="eyebrow" id="clueEyebrow">Clue 1 · Addition</span>
-        <h2 id="clueTitle">The Mixing Bowl</h2>
-        <p id="clueStory"></p>
-        <div class="sum" id="clueSum">34 + 25 = ?</div>
-        <div class="choices" id="choices"></div>
-        <p class="hint" id="hint" aria-live="polite"></p>
-      </div>
-    </div>
-
-    <!-- Win -->
-    <div class="overlay" id="winScreen" hidden>
-      <div class="panel">
-        <span class="eyebrow">Level 1 complete · Code word cracked</span>
-        <h2>The pie is baking at 375°F!</h2>
-        <p>Recipe rebuilt: <b>59</b> spoonfuls of pumpkin, <b>84</b> shakes of spice, oven at <b>375°F</b>. Code word: <b>PIE</b>.</p>
-        <p id="score"></p>
-        <span class="eyebrow">Pick one twist for Level 2</span>
-        <div class="twists" id="twists">
-          <button class="twist" data-twist="Pumpkin Power-Up" aria-pressed="false"><strong>Pumpkin Power-Up</strong><span>A small pumpkin joins you. Unlocks multiplication puzzles and a shortcut path.</span></button>
-          <button class="twist" data-twist="Egg Shield Defense" aria-pressed="false"><strong>Egg Shield Defense</strong><span>Eggs become your shield. Adds subtraction problems and protection from heat traps.</span></button>
-          <button class="twist" data-twist="Cinnamon Speed Boost" aria-pressed="false"><strong>Cinnamon Speed Boost</strong><span>Cinnamon boosts your speed. Adds a timed challenge and harder addition.</span></button>
-        </div>
-        <div class="pickline" id="pickline" hidden>
-          <span>Send this to Claude:</span>
-          <code id="pickText"></code>
-          <button class="btn" id="copyBtn" style="font-size:16px;padding:6px 12px">Copy</button>
-        </div>
-        <button class="btn go" id="againBtn">Play Level 1 again</button>
-      </div>
     </div>
   </div>
 
@@ -160,42 +113,91 @@ button { font: inherit; cursor: pointer; }
   <p class="help">Answers check themselves. Wrong answers just give you a hint, and steam only takes 1 heart, so you can't lose.</p>
 </div>
 
+<!-- Title / meet the hero -->
+<div class="overlay" id="titleScreen">
+  <div class="panel">
+    <div class="tabs" role="tablist" aria-label="Choose a level">
+      <button class="tab" role="tab" id="tab1" data-level="0" aria-selected="false">Level 1</button>
+      <button class="tab" role="tab" id="tab2" data-level="1" aria-selected="true">Level 2<span class="new">NEW</span></button>
+    </div>
+    <span class="eyebrow" id="introEyebrow">Your hero</span>
+    <div class="intro">
+      <canvas id="portrait" width="320" height="320" aria-label="Pie Pie Hero"></canvas>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+        <h2 id="introTitle">Meet Pie Pie Hero</h2>
+        <ul class="stats" id="introStats"></ul>
+        <p id="introText"></p>
+      </div>
+    </div>
+    <button class="btn go" id="startBtn">Start Level 1</button>
+    <p class="small">Keys: ← → to move, Space or ↑ to jump. On a phone, use the buttons under the game.</p>
+  </div>
+</div>
+
+<!-- Clue -->
+<div class="overlay" id="clueScreen" hidden>
+  <div class="panel">
+    <span class="eyebrow" id="clueEyebrow">Clue 1</span>
+    <h2 id="clueTitle">Clue</h2>
+    <p id="clueStory"></p>
+    <div class="dots" id="clueDots" hidden></div>
+    <div class="sum" id="clueSum">?</div>
+    <div class="choices" id="choices"></div>
+    <p class="hint" id="hint" aria-live="polite"></p>
+  </div>
+</div>
+
+<!-- Win -->
+<div class="overlay" id="winScreen" hidden>
+  <div class="panel">
+    <span class="eyebrow" id="winEyebrow">Level complete</span>
+    <h2 id="winTitle">Done!</h2>
+    <p id="winText"></p>
+    <p id="score"></p>
+    <span class="eyebrow" id="twistEyebrow">Pick one twist for the next level</span>
+    <div class="twists" id="twists"></div>
+    <div class="pickline" id="pickline" hidden>
+      <span>Send this to Claude:</span>
+      <code id="pickText"></code>
+      <button class="btn" id="copyBtn" style="font-size:16px;padding:6px 12px">Copy</button>
+    </div>
+    <div class="row">
+      <button class="btn go" id="nextBtn">Play Level 2</button>
+      <button class="btn" id="againBtn">Play again</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (() => {
-  const W = 960, H = 540, GROUND = 452, LEVEL_W = 3200;
+  const W = 960, H = 540, GROUND = 452;
   const cv = document.getElementById('game'), ctx = cv.getContext('2d');
   const $ = id => document.getElementById(id);
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ---------- The hero drawing (used for the portrait AND the player) ---------- */
   function drawHero(g, x, y, s, face, t, opts = {}) {
-    // x,y = bottom-centre of feet. s = scale (1 => ~64px tall body)
     g.save();
     g.translate(x, y);
     g.scale(s * face, s);
     const walk = opts.walking ? Math.sin(t * 0.35) : 0;
     const bob = opts.walking ? Math.abs(walk) * 2 : Math.sin(t * 0.06) * 1.5;
     if (opts.hurt && Math.floor(t / 4) % 2) g.globalAlpha = 0.45;
-    // shadow
     g.fillStyle = 'rgba(59,31,18,.18)';
     g.beginPath(); g.ellipse(0, 0, 26, 5, 0, 0, Math.PI * 2); g.fill();
-    // legs
     g.fillStyle = '#7a4320';
     g.beginPath(); g.ellipse(-12 + walk * 4, -6, 7, 8, 0, 0, Math.PI * 2); g.fill();
     g.beginPath(); g.ellipse(12 - walk * 4, -6, 7, 8, 0, 0, Math.PI * 2); g.fill();
     g.translate(0, -40 - bob);
-    // cinnamon stick (behind body)
     g.save(); g.translate(10, -30); g.rotate(0.45);
     g.fillStyle = '#8a4a22'; roundRect(g, -5, -28, 10, 34, 4); g.fill();
     g.strokeStyle = '#5e2f14'; g.lineWidth = 1.5;
     for (let i = -22; i < 4; i += 7) { g.beginPath(); g.moveTo(-5, i); g.lineTo(5, i + 2); g.stroke(); }
     g.fillStyle = '#c47b45'; g.beginPath(); g.ellipse(0, -28, 5, 2.5, 0, 0, Math.PI * 2); g.fill();
     g.restore();
-    // arms
     g.strokeStyle = '#7a4320'; g.lineWidth = 5; g.lineCap = 'round';
     g.beginPath(); g.moveTo(-30, 2); g.lineTo(-40, 12 - walk * 5); g.stroke();
     g.beginPath(); g.moveTo(30, 2); g.lineTo(41, opts.cheer ? -18 : 10 + walk * 5); g.stroke();
-    // crust (scalloped rim)
     g.fillStyle = '#c9863a';
     for (let i = 0; i < 16; i++) {
       const a = (i / 16) * Math.PI * 2;
@@ -207,14 +209,11 @@ button { font: inherit; cursor: pointer; }
       const a = (i / 16) * Math.PI * 2 + 0.2;
       g.beginPath(); g.moveTo(Math.cos(a) * 28, Math.sin(a) * 28); g.lineTo(Math.cos(a) * 35, Math.sin(a) * 35); g.stroke();
     }
-    // filling
     const grd = g.createRadialGradient(-8, -10, 4, 0, 0, 27);
     grd.addColorStop(0, '#f5a14a'); grd.addColorStop(1, '#d7671f');
     g.fillStyle = grd; g.beginPath(); g.arc(0, 0, 26, 0, Math.PI * 2); g.fill();
-    // whipped cream dollop
     g.fillStyle = '#fff8ee';
     g.beginPath(); g.arc(-12, -18, 6, 0, Math.PI * 2); g.arc(-6, -21, 5, 0, Math.PI * 2); g.arc(-17, -14, 4, 0, Math.PI * 2); g.fill();
-    // face
     const blink = (Math.floor(t) % 180) < 6;
     g.fillStyle = '#fff';
     if (!blink) {
@@ -235,62 +234,155 @@ button { font: inherit; cursor: pointer; }
     g.stroke();
     g.restore();
   }
+
+  /* ---------- Pip, the little pumpkin sidekick (Level 2 twist) ---------- */
+  function drawPip(g, x, y, s, face, t, opts = {}) {
+    g.save(); g.translate(x, y); g.scale(s * face, s);
+    const hop = opts.moving ? Math.abs(Math.sin(t * 0.3)) * 6 : Math.sin(t * 0.08) * 1.5;
+    g.fillStyle = 'rgba(59,31,18,.18)';
+    g.beginPath(); g.ellipse(0, 0, 15, 3.5, 0, 0, Math.PI * 2); g.fill();
+    g.translate(0, -16 - hop);
+    // ribs
+    g.fillStyle = '#e9782a';
+    g.beginPath(); g.ellipse(-8, 0, 10, 14, 0, 0, Math.PI * 2); g.ellipse(8, 0, 10, 14, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#f39a45'; g.beginPath(); g.ellipse(0, 0, 9, 15, 0, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = '#c95f1c'; g.lineWidth = 1.5;
+    g.beginPath(); g.moveTo(-5, -12); g.quadraticCurveTo(-8, 0, -5, 12); g.moveTo(5, -12); g.quadraticCurveTo(8, 0, 5, 12); g.stroke();
+    // stem + leaf
+    g.fillStyle = '#5e3a1a'; roundRect(g, -2, -20, 5, 8, 2); g.fill();
+    g.fillStyle = '#4f7a3a'; g.beginPath(); g.ellipse(7, -17, 6, 3, -0.5, 0, Math.PI * 2); g.fill();
+    // face
+    g.fillStyle = '#2a160d';
+    g.beginPath(); g.arc(-4, -2, 2.2, 0, Math.PI * 2); g.arc(5, -2, 2.2, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(-3.4, -2.8, .8, 0, Math.PI * 2); g.arc(5.6, -2.8, .8, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = '#2a160d'; g.lineWidth = 1.6;
+    g.beginPath(); g.arc(0.5, 3, 3.5, 0.2, Math.PI - 0.2); g.stroke();
+    g.fillStyle = 'rgba(156,43,58,.35)';
+    g.beginPath(); g.ellipse(-9, 3, 2.5, 1.6, 0, 0, Math.PI * 2); g.ellipse(10, 3, 2.5, 1.6, 0, 0, Math.PI * 2); g.fill();
+    g.restore();
+  }
+
   function roundRect(g, x, y, w, h, r) {
     g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
     g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
   }
 
-  /* ---------- Portrait on the title screen ---------- */
-  const pc = $('portrait'), pg = pc.getContext('2d');
-  let pt = 0;
-  function portraitLoop() {
-    pg.clearRect(0, 0, 320, 320);
-    drawHero(pg, 160, 268, 3, 1, pt, { cheer: true });
-    pt++;
-    if (!$('titleScreen').hidden) requestAnimationFrame(portraitLoop);
-  }
-
-  /* ---------- Level data ---------- */
-  const CLUES = [
-    { x: 820, kind: 'bowl', title: 'The Mixing Bowl', eyebrow: 'Clue 1 · Addition',
-      story: 'The recipe says to scoop pumpkin into the bowl twice: 34 spoonfuls, then 25 more. How many spoonfuls in all?',
-      a: 34, b: 25, answer: 59, options: [49, 59, 69], letter: 'P',
-      hint: 'Add the ones first: 4 + 5 = 9. Then the tens: 30 + 20 = 50.' },
-    { x: 1820, kind: 'spice', title: 'The Spice Rack', eyebrow: 'Clue 2 · Addition with regrouping',
-      story: 'Shake in 46 pinches of cinnamon and 38 pinches of nutmeg. How many pinches of spice?',
-      a: 46, b: 38, answer: 84, options: [74, 84, 714], letter: 'I',
-      hint: '6 + 8 = 14. Write the 4 and carry the 1 to the tens: 4 + 3 + 1 = 8.' },
-    { x: 2820, kind: 'oven', title: 'The Oven', eyebrow: 'Clue 3 · Addition',
-      story: 'The oven starts at 350 degrees. The chef turns it up 25 more degrees. What temperature is the oven now?',
-      a: 350, b: 25, answer: 375, options: [325, 375, 400], letter: 'E',
-      hint: 'Keep the 3 hundreds. 50 + 20 = 70, and 0 + 5 = 5.' },
+  /* ---------- Levels ---------- */
+  const LEVELS = [
+    {
+      name: 'Level 1', subtitle: 'Level 1 · The Kitchen',
+      width: 3200, sidekick: false,
+      theme: { wall: '#fbe9d0', tile: 'rgba(201,134,58,.25)', band: '#9c2b3a', lower: '#f6dcbc', sky: '#bfe3f2', sun: '#e9782a', patch: false },
+      intro: {
+        eyebrow: 'Your hero', title: 'Meet Pie Pie Hero',
+        stats: [['HP', '10/10'], ['Oven heat', '350°F'], ['Power', 'Math solving'], ['Inventory', '2 eggs · 1 pumpkin']],
+        text: 'Run through the kitchen, dodge the steam, and solve the 3 clues to rebuild the recipe and crack the secret code word.',
+      },
+      start: { eggs: 2, pumpkins: 1 },
+      clues: [
+        { x: 820, kind: 'bowl', title: 'The Mixing Bowl', eyebrow: 'Clue 1 · Addition', op: '+',
+          story: 'The recipe says to scoop pumpkin into the bowl twice: 34 spoonfuls, then 25 more. How many spoonfuls in all?',
+          a: 34, b: 25, answer: 59, options: [49, 59, 69], letter: 'P',
+          hint: 'Add the ones first: 4 + 5 = 9. Then the tens: 30 + 20 = 50.' },
+        { x: 1820, kind: 'spice', title: 'The Spice Rack', eyebrow: 'Clue 2 · Addition with regrouping', op: '+',
+          story: 'Shake in 46 pinches of cinnamon and 38 pinches of nutmeg. How many pinches of spice?',
+          a: 46, b: 38, answer: 84, options: [74, 84, 714], letter: 'I',
+          hint: '6 + 8 = 14. Write the 4 and carry the 1 to the tens: 4 + 3 + 1 = 8.' },
+        { x: 2820, kind: 'oven', title: 'The Oven', eyebrow: 'Clue 3 · Addition', op: '+',
+          story: 'The oven starts at 350 degrees. The chef turns it up 25 more degrees. What temperature is the oven now?',
+          a: 350, b: 25, answer: 375, options: [325, 375, 400], letter: 'E',
+          hint: 'Keep the 3 hundreds. 50 + 20 = 70, and 0 + 5 = 5.' },
+      ],
+      platforms: [ { x: 380, y: 350, w: 160 }, { x: 1100, y: 340, w: 180 }, { x: 1350, y: 270, w: 140 }, { x: 2150, y: 350, w: 170 }, { x: 2400, y: 290, w: 150 } ],
+      steam: [ { x: 620, p: 0 }, { x: 1500, p: 60 }, { x: 2050, p: 30 }, { x: 2620, p: 90 } ],
+      pads: [],
+      items: [
+        ...[200, 260, 320, 960, 1020, 1640, 1700, 2300, 2360, 3000].map(x => [x, GROUND - 40, 'star']),
+        [460, 310, 'egg'], [1190, 300, 'pumpkin'], [1420, 230, 'egg'], [2475, 250, 'pumpkin'], [2230, 310, 'egg'],
+      ],
+      bakeText: 'Code word PIE! The pie is baking…',
+      win: {
+        eyebrow: 'Level 1 complete · Code word cracked',
+        title: 'The pie is baking at 375°F!',
+        text: 'Recipe rebuilt: <b>59</b> spoonfuls of pumpkin, <b>84</b> shakes of spice, oven at <b>375°F</b>. Code word: <b>PIE</b>.',
+        twistLabel: 'Pick one twist for Level 2',
+      },
+      twists: [
+        ['Pumpkin Power-Up', 'A small pumpkin joins you. Unlocks multiplication puzzles and a shortcut path.'],
+        ['Egg Shield Defense', 'Eggs become your shield. Adds subtraction problems and protection from heat traps.'],
+        ['Cinnamon Speed Boost', 'Cinnamon boosts your speed. Adds a timed challenge and harder addition.'],
+      ],
+    },
+    {
+      name: 'Level 2', subtitle: 'Level 2 · Pumpkin Power-Up',
+      width: 3600, sidekick: true,
+      theme: { wall: '#f7dcc0', tile: 'rgba(79,122,58,.22)', band: '#4f7a3a', lower: '#efcfa8', sky: '#f6c48a', sun: '#9c2b3a', patch: true },
+      intro: {
+        eyebrow: 'Pumpkin Power-Up', title: 'Pip joins the case!',
+        stats: [['HP', '10/10'], ['Sidekick', 'Pip the pumpkin'], ['Power', 'Multiplication'], ['Pip bonus', 'Pulls in nearby stars'], ['Shortcut', 'Step on a Pip pad to launch up high']],
+        text: 'The pie needs a second batch for the bake sale. Run through the pumpkin pantry with Pip, take the high shortcut over the steam, and solve 3 multiplication clues to crack a new code word.',
+      },
+      start: { eggs: 2, pumpkins: 2 },
+      clues: [
+        { x: 950, kind: 'eggs', title: 'The Egg Carton', eyebrow: 'Clue 1 · Multiplication', op: '×',
+          story: 'Every pie needs 2 eggs. Pie Pie Hero is baking 4 pies for the bake sale. How many eggs are needed?',
+          a: 4, b: 2, answer: 8, options: [6, 8, 10], letter: 'Y', groups: [4, 2],
+          hint: '4 groups of 2: count by 2s. 2, 4, 6, 8.' },
+        { x: 2100, kind: 'slices', title: 'The Cutting Board', eyebrow: 'Clue 2 · Multiplication', op: '×',
+          story: 'Each pie gets cut into 6 slices. There are 3 pies on the cutting board. How many slices is that?',
+          a: 3, b: 6, answer: 18, options: [9, 18, 24], letter: 'U', groups: [3, 6],
+          hint: '3 groups of 6: count by 6s. 6, 12, 18.' },
+        { x: 3350, kind: 'patch', title: 'The Pumpkin Baskets', eyebrow: 'Clue 3 · Multiplication', op: '×',
+          story: 'Pip finds 5 baskets in the pantry. Each basket holds 4 pumpkins. How many pumpkins did Pip find?',
+          a: 5, b: 4, answer: 20, options: [9, 20, 25], letter: 'M', groups: [5, 4],
+          hint: '5 groups of 4: count by 4s. 4, 8, 12, 16, 20.' },
+      ],
+      platforms: [
+        { x: 420, y: 340, w: 150 }, { x: 640, y: 280, w: 120 },
+        // high shortcut 1 (reach it with the Pip pad at 1260)
+        { x: 1240, y: 210, w: 600, high: true },
+        { x: 2350, y: 340, w: 150 },
+        // high shortcut 2 (Pip pad at 2620)
+        { x: 2600, y: 210, w: 560, high: true },
+      ],
+      steam: [ { x: 760, p: 0 }, { x: 1450, p: 40 }, { x: 1700, p: 110 }, { x: 2300, p: 70 }, { x: 2800, p: 20 }, { x: 3020, p: 100 } ],
+      pads: [ { x: 1260 }, { x: 2620 } ],
+      items: [
+        ...[220, 280, 340, 880, 1980, 2040, 3250].map(x => [x, GROUND - 40, 'star']),
+        ...[1320, 1390, 1460, 1530, 1600, 1670, 1740].map(x => [x, 160, 'star']),
+        ...[2680, 2750, 2820, 2890, 2960, 3030, 3100].map(x => [x, 160, 'star']),
+        [495, 300, 'egg'], [700, 240, 'pumpkin'], [2425, 300, 'egg'], [1800, 160, 'pumpkin'],
+      ],
+      bakeText: 'Code word YUM! Pip found the whole recipe!',
+      win: {
+        eyebrow: 'Level 2 complete · Code word cracked',
+        title: 'Two batches, one hungry bake sale!',
+        text: 'Pip helped you count it all: <b>8</b> eggs, <b>18</b> slices, <b>20</b> pumpkins. Code word: <b>YUM</b>.',
+        twistLabel: 'Pick one twist for Level 3',
+      },
+      twists: [
+        ['Rolling Pin Racer', 'Ride a rolling pin down a long counter. Adds division puzzles about sharing pie slices fairly.'],
+        ['Whipped Cream Clouds', 'Bounce across clouds of whipped cream. Adds fraction puzzles with halves and quarters of a pie.'],
+        ['Midnight Bake', 'The kitchen lights go out. Find clues with a lantern. Adds measuring-cup puzzles.'],
+      ],
+    },
   ];
-  const PLATFORMS = [
-    { x: 380, y: 350, w: 160 }, { x: 1100, y: 340, w: 180 }, { x: 1350, y: 270, w: 140 },
-    { x: 2150, y: 350, w: 170 }, { x: 2400, y: 290, w: 150 },
-  ];
-  const STEAM = [ { x: 620, p: 0 }, { x: 1500, p: 60 }, { x: 2050, p: 30 }, { x: 2620, p: 90 } ];
-  function makeItems() {
-    const L = [];
-    const put = (x, y, k) => L.push({ x, y, k, got: false });
-    [200, 260, 320].forEach(x => put(x, GROUND - 40, 'star'));
-    put(460, 310, 'egg'); put(1190, 300, 'pumpkin'); put(1420, 230, 'egg');
-    [960, 1020, 1640, 1700, 2300, 2360].forEach(x => put(x, GROUND - 40, 'star'));
-    put(2475, 250, 'pumpkin'); put(2230, 310, 'egg'); put(3000, GROUND - 40, 'star');
-    return L;
-  }
 
   /* ---------- State ---------- */
+  let LV = 1; // selected level index
   let S;
-  function fresh() {
+  function fresh(li) {
+    const L = LEVELS[li];
     return {
-      mode: 'title', t: 0, camX: 0,
+      li, L, mode: 'title', t: 0, camX: 0,
       p: { x: 120, y: GROUND, vx: 0, vy: 0, face: 1, onGround: true, hurt: 0 },
-      hp: 10, eggs: 2, pumpkins: 1, stars: 0, solved: 0, letters: [], items: makeItems(), lastSafeX: 120,
-      bake: 0, sparkles: [],
+      trail: [], pip: { x: 80, y: GROUND, face: 1, moving: false },
+      hp: 10, eggs: L.start.eggs, pumpkins: L.start.pumpkins, stars: 0, solved: 0, letters: [],
+      items: L.items.map(([x, y, k]) => ({ x, y, k, got: false })), lastSafeX: 120,
+      bake: 0, sparkles: [], toast: null,
     };
   }
-  S = fresh();
+  S = fresh(LV);
   const keys = { l: false, r: false, j: false };
 
   /* ---------- Input ---------- */
@@ -310,6 +402,7 @@ button { font: inherit; cursor: pointer; }
     const off = e => { e.preventDefault(); keys[k] = false; };
     el.addEventListener('pointerdown', on); el.addEventListener('pointerup', off);
     el.addEventListener('pointerleave', off); el.addEventListener('pointercancel', off);
+    el.addEventListener('contextmenu', e => e.preventDefault());
   }
   hold('padL', 'l'); hold('padR', 'r'); hold('padJ', 'j');
 
@@ -320,14 +413,24 @@ button { font: inherit; cursor: pointer; }
     $('clues').textContent = `Clues ${S.solved}/3`;
     $('code').textContent = [0, 1, 2].map(i => S.letters[i] || '_').join(' ');
   }
+  function toast(text) { S.toast = { text, t: 110 }; }
 
   /* ---------- Clue modal ---------- */
   function openClue(i) {
-    const c = CLUES[i];
+    const c = S.L.clues[i];
     S.mode = 'clue'; keys.l = keys.r = keys.j = false;
     $('clueEyebrow').textContent = c.eyebrow; $('clueTitle').textContent = c.title;
-    $('clueStory').textContent = c.story; $('clueSum').textContent = `${c.a} + ${c.b} = ?`;
+    $('clueStory').textContent = c.story; $('clueSum').textContent = `${c.a} ${c.op} ${c.b} = ?`;
     $('hint').textContent = '';
+    const dots = $('clueDots'); dots.innerHTML = '';
+    if (c.groups) {
+      for (let g = 0; g < c.groups[0]; g++) {
+        const grp = document.createElement('span'); grp.className = 'grp';
+        for (let d = 0; d < c.groups[1]; d++) grp.appendChild(document.createElement('i'));
+        dots.appendChild(grp);
+      }
+      dots.hidden = false;
+    } else dots.hidden = true;
     const box = $('choices'); box.innerHTML = '';
     c.options.forEach(v => {
       const b = document.createElement('button');
@@ -335,7 +438,7 @@ button { font: inherit; cursor: pointer; }
       b.addEventListener('click', () => {
         if (v === c.answer) {
           b.classList.add('right');
-          $('clueSum').textContent = `${c.a} + ${c.b} = ${c.answer}`;
+          $('clueSum').textContent = `${c.a} ${c.op} ${c.b} = ${c.answer}`;
           $('hint').textContent = `Correct! You found the letter ${c.letter}.`;
           box.querySelectorAll('button').forEach(x => x.disabled = true);
           setTimeout(() => {
@@ -366,7 +469,7 @@ button { font: inherit; cursor: pointer; }
   /* ---------- Update ---------- */
   function update() {
     S.t++;
-    const p = S.p;
+    const p = S.p, L = S.L;
     if (S.mode === 'play') {
       const speed = 4.2;
       p.vx = (keys.r ? speed : 0) - (keys.l ? speed : 0);
@@ -375,71 +478,94 @@ button { font: inherit; cursor: pointer; }
       p.vy += 0.75; if (p.vy > 16) p.vy = 16;
       const prevY = p.y;
       p.x += p.vx; p.y += p.vy;
-      p.x = Math.max(40, Math.min(LEVEL_W - 60, p.x));
+      p.x = Math.max(40, Math.min(L.width - 60, p.x));
       p.onGround = false;
       if (p.y >= GROUND) { p.y = GROUND; p.vy = 0; p.onGround = true; }
-      for (const pl of PLATFORMS) {
+      for (const pl of L.platforms) {
         if (p.vy >= 0 && prevY <= pl.y && p.y >= pl.y && p.x > pl.x - 18 && p.x < pl.x + pl.w + 18) {
           p.y = pl.y; p.vy = 0; p.onGround = true;
         }
       }
+      // Pip pads: launch to the high shortcut
+      for (const pad of L.pads) {
+        if (p.onGround && p.y === GROUND && Math.abs(p.x - pad.x) < 30) {
+          p.vy = -20.5; p.onGround = false; pad.boing = 20;
+          toast('Pip boost! Shortcut unlocked ↑');
+        }
+        if (pad.boing) pad.boing--;
+      }
       if (p.hurt) p.hurt--;
-      // steam
-      for (const s of STEAM) {
+      for (const s of L.steam) {
         const ph = (S.t + s.p) % 160;
-        const active = ph < 70;
-        if (active && !p.hurt && Math.abs(p.x - s.x) < 34 && p.y > GROUND - 150) {
+        if (ph < 70 && !p.hurt && Math.abs(p.x - s.x) < 34 && p.y > GROUND - 150) {
           S.hp = Math.max(0, S.hp - 1); p.hurt = 60; p.vy = -9; p.x += (p.x < s.x ? -1 : 1) * 40;
           if (S.hp === 0) { S.hp = 10; p.x = S.lastSafeX; p.y = GROUND; }
           hud();
         }
       }
-      // items
       for (const it of S.items) {
-        if (!it.got && Math.abs(p.x - it.x) < 34 && Math.abs((p.y - 40) - it.y) < 44) {
+        if (it.got) continue;
+        // Pip's magnet: nearby stars drift toward the hero
+        if (L.sidekick && it.k === 'star') {
+          const dx = p.x - it.x, dy = (p.y - 40) - it.y, d = Math.hypot(dx, dy);
+          if (d < 150) { it.x += dx * 0.12; it.y += dy * 0.12; }
+        }
+        if (Math.abs(p.x - it.x) < 34 && Math.abs((p.y - 40) - it.y) < 44) {
           it.got = true;
           if (it.k === 'egg') S.eggs++; else if (it.k === 'pumpkin') S.pumpkins++; else S.stars++;
           hud();
         }
       }
-      // clue stations
-      const next = CLUES[S.solved];
-      if (next && p.x >= next.x - 50) { p.x = next.x - 50; S.lastSafeX = next.x - 60; openClue(S.solved); }
-      if (S.solved > 0) S.lastSafeX = Math.max(S.lastSafeX, CLUES[S.solved - 1].x + 60);
+      const next = L.clues[S.solved];
+      if (next && p.x >= next.x - 50) {
+        p.x = next.x - 50;
+        if (p.y < GROUND) { p.y = GROUND; p.vy = 0; }
+        S.lastSafeX = next.x - 60; openClue(S.solved);
+      }
+      if (S.solved > 0) S.lastSafeX = Math.max(S.lastSafeX, L.clues[S.solved - 1].x + 60);
     } else if (S.mode === 'bake') {
       S.bake++;
-      if (S.bake === 1) burst(CLUES[2].x, GROUND - 160);
+      if (S.bake === 1) burst(L.clues[2].x, GROUND - 160);
       if (S.bake > 150) showWin();
     }
-    // camera
-    const target = Math.max(0, Math.min(LEVEL_W - W, p.x - W * 0.38));
+    // Pip follows a few steps behind
+    S.trail.push({ x: p.x, y: p.y, face: p.face });
+    if (S.trail.length > 16) {
+      const tp = S.trail.shift();
+      S.pip.moving = Math.abs(tp.x - 46 * tp.face - S.pip.x) > 1;
+      S.pip.x = tp.x - 46 * tp.face; S.pip.y = tp.y; S.pip.face = tp.face;
+    }
+    const target = Math.max(0, Math.min(L.width - W, p.x - W * 0.38));
     S.camX += (target - S.camX) * 0.12;
     for (const s of S.sparkles) { s.x += s.vx; s.y += s.vy; s.vy += 0.15; s.life--; }
     S.sparkles = S.sparkles.filter(s => s.life > 0);
+    if (S.toast && --S.toast.t <= 0) S.toast = null;
   }
 
   /* ---------- Draw ---------- */
   function drawBG() {
-    // wall tiles with parallax
-    ctx.fillStyle = '#fbe9d0'; ctx.fillRect(0, 0, W, H);
+    const T = S.L.theme;
+    ctx.fillStyle = T.wall; ctx.fillRect(0, 0, W, H);
     const off = -(S.camX * 0.5) % 60;
-    ctx.strokeStyle = 'rgba(201,134,58,.25)'; ctx.lineWidth = 2;
+    ctx.strokeStyle = T.tile; ctx.lineWidth = 2;
     for (let x = off; x < W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 300); ctx.stroke(); }
     for (let y = 0; y < 300; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
-    // wallpaper band
-    ctx.fillStyle = '#9c2b3a'; ctx.fillRect(0, 300, W, 14);
-    ctx.fillStyle = '#f6dcbc'; ctx.fillRect(0, 314, W, GROUND - 314);
-    // windows (far)
-    for (let i = 0; i < 6; i++) {
+    ctx.fillStyle = T.band; ctx.fillRect(0, 300, W, 14);
+    ctx.fillStyle = T.lower; ctx.fillRect(0, 314, W, GROUND - 314);
+    for (let i = 0; i < 7; i++) {
       const wx = i * 620 + 260 - S.camX * 0.5;
       if (wx < -200 || wx > W + 50) continue;
       ctx.fillStyle = '#c9863a'; roundRect(ctx, wx - 6, 50, 172, 150, 10); ctx.fill();
-      ctx.fillStyle = '#bfe3f2'; ctx.fillRect(wx, 56, 160, 138);
-      ctx.fillStyle = '#e9782a'; ctx.beginPath(); ctx.arc(wx + 120, 100, 18, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = T.sky; ctx.fillRect(wx, 56, 160, 138);
+      ctx.fillStyle = T.sun; ctx.beginPath(); ctx.arc(wx + 120, 100, 18, 0, Math.PI * 2); ctx.fill();
+      if (T.patch) {
+        ctx.fillStyle = '#4f7a3a'; ctx.fillRect(wx, 160, 160, 34);
+        ctx.fillStyle = '#e9782a';
+        [20, 62, 104, 140].forEach((px, k) => { ctx.beginPath(); ctx.ellipse(wx + px, 165 + (k % 2) * 10, 11, 8, 0, 0, Math.PI * 2); ctx.fill(); });
+      }
       ctx.strokeStyle = '#c9863a'; ctx.lineWidth = 6;
       ctx.beginPath(); ctx.moveTo(wx + 80, 56); ctx.lineTo(wx + 80, 194); ctx.moveTo(wx, 125); ctx.lineTo(wx + 160, 125); ctx.stroke();
     }
-    // counter (ground)
     ctx.fillStyle = '#b06a32'; ctx.fillRect(0, GROUND, W, 16);
     ctx.fillStyle = '#7a4320'; ctx.fillRect(0, GROUND + 16, W, H - GROUND - 16);
     ctx.fillStyle = 'rgba(255,255,255,.12)';
@@ -453,6 +579,7 @@ button { font: inherit; cursor: pointer; }
     const x = c.x - S.camX, done = S.solved > i;
     if (x < -200 || x > W + 200) return;
     ctx.save(); ctx.translate(x, GROUND);
+    let signY = -220;
     if (c.kind === 'bowl') {
       ctx.fillStyle = '#4f7a3a'; ctx.beginPath(); ctx.ellipse(0, -34, 60, 14, 0, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.moveTo(-60, -34); ctx.quadraticCurveTo(0, 30, 60, -34); ctx.fill();
@@ -462,28 +589,52 @@ button { font: inherit; cursor: pointer; }
     } else if (c.kind === 'spice') {
       ctx.fillStyle = '#7a4320'; ctx.fillRect(-70, -150, 140, 10); ctx.fillRect(-70, -80, 140, 10);
       ctx.fillRect(-70, -150, 8, 80); ctx.fillRect(62, -150, 8, 80);
-      const cols = ['#9c2b3a', '#c9863a', '#4f7a3a', '#e9782a'];
-      cols.forEach((col, k) => {
+      ['#9c2b3a', '#c9863a', '#4f7a3a', '#e9782a'].forEach((col, k) => {
         ctx.fillStyle = col; roundRect(ctx, -56 + k * 30, -140, 22, 58, 5); ctx.fill();
         ctx.fillStyle = '#fff8ee'; ctx.fillRect(-52 + k * 30, -122, 14, 14);
       });
       ctx.fillStyle = '#9c2b3a'; ctx.fillRect(-4, -70, 8, 70);
-    } else {
+    } else if (c.kind === 'oven') {
       ctx.fillStyle = '#5a5f66'; roundRect(ctx, -90, -190, 180, 190, 12); ctx.fill();
       ctx.fillStyle = '#3d4248'; ctx.fillRect(-90, -190, 180, 36);
       ctx.fillStyle = done || S.mode === 'bake' ? '#ffb347' : '#2a2d31'; roundRect(ctx, -68, -140, 136, 110, 10); ctx.fill();
-      if (S.mode === 'bake' || done) {
-        drawMiniPie(ctx, 0, -60, Math.min(1, (S.bake || 150) / 120));
-      }
+      if (S.mode === 'bake' || done) drawMiniPie(ctx, 0, -60, Math.min(1, (S.bake || 150) / 120));
       ctx.fillStyle = '#fff8ee'; ctx.font = '16px "Lilita One", sans-serif'; ctx.textAlign = 'center';
       ctx.fillText(done ? '375°F' : '350°F', 0, -166);
       ctx.fillStyle = '#c9863a'; ctx.fillRect(-60, -24, 120, 8);
+      signY = -250;
+    } else if (c.kind === 'eggs') {
+      ctx.fillStyle = '#7a4320'; ctx.fillRect(-70, -60, 140, 60);
+      ctx.fillStyle = '#d9c3a0'; roundRect(ctx, -64, -84, 128, 30, 8); ctx.fill();
+      for (let k = 0; k < 4; k++) for (let r = 0; r < 2; r++) {
+        ctx.fillStyle = done ? '#fff3dc' : '#f1e3c8';
+        ctx.beginPath(); ctx.ellipse(-48 + k * 32, -90 - r * 14, 10, 12, 0, 0, Math.PI * 2); ctx.fill();
+      }
+    } else if (c.kind === 'slices') {
+      ctx.fillStyle = '#a5662a'; roundRect(ctx, -90, -30, 180, 30, 8); ctx.fill();
+      for (let k = 0; k < 3; k++) {
+        const px = -55 + k * 55;
+        ctx.fillStyle = '#c9863a'; ctx.beginPath(); ctx.ellipse(px, -40, 26, 9, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#e9782a'; ctx.beginPath(); ctx.ellipse(px, -42, 21, 6, 0, 0, Math.PI * 2); ctx.fill();
+        if (done) { ctx.strokeStyle = '#7a4320'; ctx.lineWidth = 1.5;
+          for (let s = 0; s < 3; s++) { const a = s * Math.PI / 3; ctx.beginPath(); ctx.moveTo(px - Math.cos(a) * 21, -42 - Math.sin(a) * 6); ctx.lineTo(px + Math.cos(a) * 21, -42 + Math.sin(a) * 6); ctx.stroke(); } }
+      }
+      ctx.fillStyle = '#9aa0a6'; ctx.save(); ctx.translate(70, -80); ctx.rotate(-0.6); ctx.fillRect(-4, -40, 8, 50); ctx.fillStyle = '#5e3a1a'; ctx.fillRect(-5, 10, 10, 26); ctx.restore();
+      signY = -180;
+    } else if (c.kind === 'patch') {
+      for (let k = 0; k < 5; k++) {
+        const bx = -100 + k * 50;
+        ctx.fillStyle = '#a5662a'; roundRect(ctx, bx - 20, -34, 40, 34, 6); ctx.fill();
+        ctx.strokeStyle = '#7a4320'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(bx, -34, 18, Math.PI, 0); ctx.stroke();
+        ctx.fillStyle = '#e9782a';
+        for (let q = 0; q < 4; q++) { ctx.beginPath(); ctx.arc(bx - 12 + q * 8, -38 - (q % 2) * 5, 6, 0, Math.PI * 2); ctx.fill(); }
+      }
+      signY = -150;
     }
-    // sign
     ctx.fillStyle = done ? '#4f7a3a' : '#9c2b3a';
-    roundRect(ctx, -54, c.kind === 'oven' ? -250 : -220, 108, 34, 10); ctx.fill();
+    roundRect(ctx, -54, signY, 108, 34, 10); ctx.fill();
     ctx.fillStyle = '#fff8ee'; ctx.font = '18px "Lilita One", sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText(done ? `✓ ${c.letter}` : `Clue ${i + 1}`, 0, c.kind === 'oven' ? -226 : -196);
+    ctx.fillText(done ? `✓ ${c.letter}` : `Clue ${i + 1}`, 0, signY + 24);
     ctx.restore();
   }
   function drawMiniPie(g, x, y, k) {
@@ -517,7 +668,6 @@ button { font: inherit; cursor: pointer; }
 
   function drawSteam(s) {
     const x = s.x - S.camX; if (x < -80 || x > W + 80) return;
-    // pot
     ctx.fillStyle = '#5a5f66'; roundRect(ctx, x - 34, GROUND - 40, 68, 40, 8); ctx.fill();
     ctx.fillStyle = '#3d4248'; ctx.fillRect(x - 40, GROUND - 44, 80, 8);
     const ph = (S.t + s.p) % 160;
@@ -534,21 +684,54 @@ button { font: inherit; cursor: pointer; }
     }
   }
 
-  function drawPlatforms() {
-    for (const pl of PLATFORMS) {
-      const x = pl.x - S.camX; if (x + pl.w < -20 || x > W + 20) continue;
-      ctx.fillStyle = '#c9863a'; roundRect(ctx, x, pl.y, pl.w, 16, 6); ctx.fill();
-      ctx.fillStyle = '#a5662a'; ctx.fillRect(x + 10, pl.y + 16, 8, 24); ctx.fillRect(x + pl.w - 18, pl.y + 16, 8, 24);
+  function drawPads() {
+    for (const pad of S.L.pads) {
+      const x = pad.x - S.camX; if (x < -80 || x > W + 80) continue;
+      const sq = pad.boing ? Math.sin(pad.boing * 0.6) * 4 : 0;
+      ctx.save(); ctx.translate(x, GROUND);
+      ctx.fillStyle = '#c95f1c'; ctx.beginPath(); ctx.ellipse(0, -8 + sq, 38, 12 - sq / 2, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f39a45'; ctx.beginPath(); ctx.ellipse(0, -12 + sq, 30, 7, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#4f7a3a'; ctx.beginPath(); ctx.moveTo(-10, -60); ctx.lineTo(10, -60); ctx.lineTo(0, -78); ctx.closePath(); ctx.fill();
+      ctx.fillRect(-4, -60, 8, 26);
+      ctx.fillStyle = '#3b1f12'; ctx.font = '13px "Lilita One", sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('PIP PAD', 0, -86);
+      ctx.restore();
     }
+  }
+
+  function drawPlatforms() {
+    for (const pl of S.L.platforms) {
+      const x = pl.x - S.camX; if (x + pl.w < -20 || x > W + 20) continue;
+      if (pl.high) {
+        // pumpkin-vine shortcut
+        ctx.fillStyle = '#4f7a3a'; roundRect(ctx, x, pl.y, pl.w, 14, 7); ctx.fill();
+        ctx.fillStyle = '#6d9a4f';
+        for (let lx = x + 20; lx < x + pl.w - 10; lx += 46) { ctx.beginPath(); ctx.ellipse(lx, pl.y + 2, 10, 5, -0.4, 0, Math.PI * 2); ctx.fill(); }
+        ctx.strokeStyle = '#3d5f2c'; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x + 8, pl.y + 14); ctx.quadraticCurveTo(x + 2, pl.y + 60, x + 12, pl.y + 90); ctx.stroke();
+      } else {
+        ctx.fillStyle = '#c9863a'; roundRect(ctx, x, pl.y, pl.w, 16, 6); ctx.fill();
+        ctx.fillStyle = '#a5662a'; ctx.fillRect(x + 10, pl.y + 16, 8, 24); ctx.fillRect(x + pl.w - 18, pl.y + 16, 8, 24);
+      }
+    }
+  }
+
+  function banner(text) {
+    ctx.font = '20px "Lilita One", sans-serif'; ctx.textAlign = 'center';
+    const w = Math.min(W - 40, ctx.measureText(text).width + 50);
+    ctx.fillStyle = 'rgba(59,31,18,.82)'; roundRect(ctx, W / 2 - w / 2, 70, w, 44, 12); ctx.fill();
+    ctx.fillStyle = '#fff8ee'; ctx.fillText(text, W / 2, 100);
   }
 
   function draw() {
     drawBG();
     drawPlatforms();
-    CLUES.forEach(drawStation);
-    STEAM.forEach(drawSteam);
+    drawPads();
+    S.L.clues.forEach(drawStation);
+    S.L.steam.forEach(drawSteam);
     S.items.forEach(it => !it.got && drawItem(it));
     const p = S.p;
+    if (S.L.sidekick) drawPip(ctx, S.pip.x - S.camX, S.pip.y, 1.15, S.pip.face, S.t, { moving: S.pip.moving });
     drawHero(ctx, p.x - S.camX, p.y, 1, p.face, S.t, {
       walking: S.mode === 'play' && p.vx !== 0 && p.onGround, hurt: p.hurt > 0, cheer: S.mode === 'bake',
     });
@@ -556,56 +739,100 @@ button { font: inherit; cursor: pointer; }
       ctx.fillStyle = `rgba(255,208,138,${s.life / 60})`;
       ctx.beginPath(); ctx.arc(s.x - S.camX, s.y, 4, 0, Math.PI * 2); ctx.fill();
     }
-    // progress bar
     ctx.fillStyle = 'rgba(59,31,18,.25)'; roundRect(ctx, 260, H - 22, 440, 10, 5); ctx.fill();
-    ctx.fillStyle = '#e9782a'; roundRect(ctx, 260, H - 22, 440 * Math.min(1, p.x / CLUES[2].x), 10, 5); ctx.fill();
-    if (S.mode === 'play' && S.t < 240 && S.solved === 0) {
-      ctx.fillStyle = 'rgba(59,31,18,.8)'; roundRect(ctx, W / 2 - 200, 70, 400, 44, 12); ctx.fill();
-      ctx.fillStyle = '#fff8ee'; ctx.font = '20px "Lilita One", sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('Head right to the first clue! →', W / 2, 100);
-    }
-    if (S.mode === 'bake') {
-      ctx.fillStyle = 'rgba(59,31,18,.8)'; roundRect(ctx, W / 2 - 220, 70, 440, 44, 12); ctx.fill();
-      ctx.fillStyle = '#fff8ee'; ctx.font = '20px "Lilita One", sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('Code word PIE! The pie is baking…', W / 2, 100);
-    }
+    ctx.fillStyle = '#e9782a'; roundRect(ctx, 260, H - 22, Math.max(10, 440 * Math.min(1, p.x / S.L.clues[2].x)), 10, 5); ctx.fill();
+    if (S.mode === 'play' && S.toast) banner(S.toast.text);
+    else if (S.mode === 'play' && S.t < 240 && S.solved === 0)
+      banner(S.L.sidekick ? 'Pip is with you! Head right →' : 'Head right to the first clue! →');
+    if (S.mode === 'bake') banner(S.L.bakeText);
   }
 
   function loop() { update(); draw(); requestAnimationFrame(loop); }
 
+  /* ---------- Title screen ---------- */
+  const pc = $('portrait'), pg = pc.getContext('2d');
+  let pt = 0;
+  function portraitLoop() {
+    pg.clearRect(0, 0, 320, 320);
+    if (LEVELS[LV].sidekick) {
+      drawHero(pg, 140, 262, 2.6, 1, pt, { cheer: true });
+      drawPip(pg, 252, 268, 2.2, -1, pt, {});
+    } else drawHero(pg, 160, 268, 3, 1, pt, { cheer: true });
+    pt++;
+    if (!$('titleScreen').hidden) requestAnimationFrame(portraitLoop);
+  }
+  function selectLevel(li) {
+    LV = li;
+    const L = LEVELS[li];
+    document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(+t.dataset.level === li)));
+    $('introEyebrow').textContent = L.intro.eyebrow;
+    $('introTitle').textContent = L.intro.title;
+    $('introStats').innerHTML = L.intro.stats.map(([k, v]) => `<li><b>${k}</b> ${v}</li>`).join('');
+    $('introText').textContent = L.intro.text;
+    $('startBtn').textContent = `Start ${L.name}`;
+    $('portrait').setAttribute('aria-label', L.sidekick ? 'Pie Pie Hero with Pip the little pumpkin' : 'Pie Pie Hero, a pumpkin pie with a cinnamon stick');
+    try { history.replaceState(null, '', '#level-' + (li + 1)); } catch (e) {}
+  }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => selectLevel(+t.dataset.level)));
+  function showTitle() {
+    $('winScreen').hidden = true; $('clueScreen').hidden = true; $('titleScreen').hidden = false; $('hud').hidden = true;
+    S = fresh(LV); portraitLoop();
+  }
+
   /* ---------- Win + twist picker ---------- */
-  const PICK_KEY = 'piepiehero-l2-pick';
+  function pickKey() { return `piepiehero-l${S.li + 2}-pick`; }
   function showWin() {
     S.mode = 'win';
+    const L = S.L, nextNum = S.li + 2;
+    $('winEyebrow').textContent = L.win.eyebrow;
+    $('winTitle').textContent = L.win.title;
+    $('winText').innerHTML = L.win.text;
+    $('twistEyebrow').textContent = L.win.twistLabel;
     $('score').textContent = `You collected ${S.stars} stars, ${S.eggs} eggs and ${S.pumpkins} pumpkins with ${S.hp}/10 hearts left.`;
-    let saved = null; try { saved = localStorage.getItem(PICK_KEY); } catch (e) {}
+    const box = $('twists'); box.innerHTML = '';
+    L.twists.forEach(([name, desc]) => {
+      const b = document.createElement('button');
+      b.className = 'twist'; b.dataset.twist = name; b.setAttribute('aria-pressed', 'false');
+      b.innerHTML = `<strong>${name}</strong><span>${desc}</span>`;
+      b.addEventListener('click', () => choose(name));
+      box.appendChild(b);
+    });
+    $('pickline').hidden = true;
+    let saved = null; try { saved = localStorage.getItem(pickKey()); } catch (e) {}
     if (saved) choose(saved);
+    const hasNext = !!LEVELS[S.li + 1];
+    $('nextBtn').hidden = !hasNext;
+    if (hasNext) $('nextBtn').textContent = `Play ${LEVELS[S.li + 1].name}`;
+    $('againBtn').textContent = `Play ${L.name} again`;
     $('winScreen').hidden = false;
+    S.nextNum = nextNum;
   }
   function choose(name) {
     document.querySelectorAll('.twist').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.twist === name)));
-    $('pickText').textContent = `My Level 2 pick: ${name}`;
+    $('pickText').textContent = `My Level ${S.li + 2} pick: ${name}`;
     $('pickline').hidden = false;
-    try { localStorage.setItem(PICK_KEY, name); } catch (e) {}
+    try { localStorage.setItem(pickKey(), name); } catch (e) {}
   }
-  document.querySelectorAll('.twist').forEach(b => b.addEventListener('click', () => choose(b.dataset.twist)));
   $('copyBtn').addEventListener('click', () => {
     const txt = $('pickText').textContent;
     const done = () => { $('copyBtn').textContent = 'Copied'; setTimeout(() => $('copyBtn').textContent = 'Copy', 1500); };
-    try {
-      navigator.clipboard.writeText(txt).then(done, () => selectPick());
-    } catch (e) { selectPick(); }
+    try { navigator.clipboard.writeText(txt).then(done, selectPick); } catch (e) { selectPick(); }
   });
   function selectPick() { const r = document.createRange(); r.selectNodeContents($('pickText')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 
   /* ---------- Start / restart ---------- */
-  function start() {
+  function start(li) {
+    LV = li;
     $('titleScreen').hidden = true; $('winScreen').hidden = true; $('hud').hidden = false;
-    S = fresh(); S.mode = 'play'; hud(); cv.focus?.();
+    $('subtitle').textContent = `Math Mystery · ${LEVELS[li].subtitle}`;
+    S = fresh(li); S.mode = 'play'; hud();
   }
-  $('startBtn').addEventListener('click', start);
-  $('againBtn').addEventListener('click', start);
+  $('startBtn').addEventListener('click', () => start(LV));
+  $('againBtn').addEventListener('click', () => start(S.li));
+  $('nextBtn').addEventListener('click', () => { selectLevel(S.li + 1); showTitle(); });
 
+  const m = /^#level-(\d)$/.exec(location.hash);
+  selectLevel(m && LEVELS[+m[1] - 1] ? +m[1] - 1 : 1);
   portraitLoop();
   loop();
 })();
